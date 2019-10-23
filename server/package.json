@@ -1,0 +1,21 @@
+{
+  "name": "vue-recipe-list",
+  "version": "1.0.0",
+  "description": "to_do-List",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "vue-todo-list"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hapi": "^18.1.0",
+    "mongoose": "^5.7.6",
+    "nodemon": "^1.19.4"
+  }
+}
