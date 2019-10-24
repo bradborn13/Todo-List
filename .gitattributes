@@ -1,1 +1,5 @@
-* linguist-language=Vue/Electron
+# Auto detect text files and perform LF normalization
+* linguist-language=Vue
+
+
+* text=auto
