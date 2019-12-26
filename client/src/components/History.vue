@@ -21,6 +21,11 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    getDate(datetime) {
+      let date = new Date(datetime).toLocaleString();
+
+      return date;
     }
   }
 };
@@ -42,8 +47,8 @@ export default {
           <tr v-for="task in tasks" v-bind:key="task._id">
             <th scope="row">{{ task.task_name }}</th>
             <td>{{ task.task_name }}</td>
-            <td>{{ task.createdAt }}</td>
-            <td>@{{ task.updatedAt }}</td>
+            <td>{{ getDate(task.createdAt) }}</td>
+            <td>{{ getDate(task.updatedAt) }}</td>
           </tr>
         </tbody>
       </table>
