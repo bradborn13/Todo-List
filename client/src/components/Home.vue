@@ -38,6 +38,16 @@ export default {
           text: `Task name is required`
         });
       }
+      const filter = this.todos.filter(x => x.task_name === this.taskName);
+
+      if (filter.length > 0) {
+        return this.$notify({
+          group: "foo",
+          type: "error",
+          title: "Error",
+          text: `Task already exists`
+        });
+      }
       axios
         .post("/api/task", { task_name: this.taskName })
         .then(res => {
