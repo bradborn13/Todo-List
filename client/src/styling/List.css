@@ -1,0 +1,13 @@
+.completeTask {
+  height: 50%;
+  opacity: 10%;
+  transition: opacity 0.5s linear;
+}
+
+.completeTask:hover {
+  opacity: 100%;
+}
+
+.task-name {
+  margin-left: 10%;
+}

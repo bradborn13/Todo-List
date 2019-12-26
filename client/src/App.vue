@@ -1,22 +1,33 @@
 <template>
   <div id="app">
-    <router-view/>
+    <notifications
+      group="foo"
+      position="bottom right "
+      width="15%"
+      ignoreDuplicates="true"
+    />
+    <Navigation />
+
+    <router-view />
   </div>
 </template>
 
 <script>
+import Navigation from "../src/components/Navigation";
 export default {
-  name: 'App'
-}
+  name: "App",
+  components: {
+    Navigation
+  }
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   margin-top: 60px;
 }
 </style>
