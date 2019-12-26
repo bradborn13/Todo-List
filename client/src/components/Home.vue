@@ -96,7 +96,10 @@ export default {
           });
         });
     },
-
+    resetInput() {
+      this.isEdit = false;
+      this.taskName = "";
+    },
     editTask(task_name, taskId) {
       this.id = taskId;
       this.taskName = task_name;
@@ -108,7 +111,6 @@ export default {
         .put(`/api/task/${this.id}`, { task_name: this.taskName })
         .then(res => {
           this.taskName = "";
-
           this.isEdit = false;
           this.getTasks();
           this.$notify({
@@ -137,19 +139,27 @@ export default {
 <template>
   <div class="container" id="todo-list">
     <div class="row">
-      <div class="col-md-6 mx-auto">
-        <form v-on:submit.prevent="addNewTask">
-          <label for="taskNameInput">Task Name</label>
-          <input
-            v-model="taskName"
-            class="form-control"
-            id="taskNameInput"
-            placeholder="Add New Task"
-          />
+      <div class="col-md-12 mx-auto">
+        <form v-on:submit.prevent="addNewTask" class="col-lg-7 mx-auto">
+          <div style="display:flex">
+            <input
+              v-model="taskName"
+              class="form-control"
+              id="taskNameInput"
+              placeholder="Add New Task"
+            />
+            <img
+              v-if="this.isEdit !== false"
+              src="../assets/X CIRCLE.svg"
+              v-on:click="resetInput()"
+              class="clearUpdate"
+            />
+          </div>
+
           <button
             v-if="this.isEdit == false"
             type="submit"
-            class="btn btn-success btn-block mt-3"
+            class=" btn btn-outline-primary btn-block mt-3 mb-4"
           >
             Submit
           </button>
@@ -157,7 +167,7 @@ export default {
             v-else
             type="button"
             v-on:click="updateTask()"
-            class="btn btn-success btn-block mt-3"
+            class="btn btn-primary btn-block mt-3 mb-4"
           >
             Update
           </button>
@@ -181,11 +191,14 @@ export default {
             <td class="text-right">
               <button
                 v-on:click="editTask(todo.task_name, todo._id)"
-                class="btn btn-info"
+                class="btn btn-outline-info"
               >
                 Edit
               </button>
-              <button v-on:click="deleteTask(todo._id)" class="btn btn-info">
+              <button
+                v-on:click="deleteTask(todo._id)"
+                class="btn btn-outline-dark"
+              >
                 Delete
               </button>
             </td>
