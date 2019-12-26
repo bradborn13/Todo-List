@@ -4,10 +4,21 @@
   transition: opacity 0.5s linear;
 }
 
+.clearUpdate:hover {
+  cursor: pointer;
+}
+
 .completeTask:hover {
   opacity: 100%;
 }
 
+.clearUpdate {
+  display: absolute;
+  height: 60px;
+  margin-left: -20px;
+  margin-top: -10px;
+}
+
 .task-name {
-  margin-left: 10%;
+  margin-left: 20%;
 }
