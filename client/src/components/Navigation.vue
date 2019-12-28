@@ -20,10 +20,13 @@ export default {
   },
   methods: {
     redirectHome() {
-      this.$router.push({ path: "/" });
+      if (this.$route.path === "/") {
+        return this.$router.go();
+      }
+      this.$router.push({ path: "/" }).catch(err => {});
     },
     redirectHistory() {
-      this.$router.push({ path: "/history" });
+      this.$router.push({ path: "/history" }).catch(err => {});
     }
   }
 };
