@@ -1,8 +1,14 @@
 <template>
   <div id="app">
     <notifications
-      group="foo"
+      group="corner-notification"
       position="bottom right "
+      width="15%"
+      ignoreDuplicates="true"
+    />
+    <notifications
+      group="center-notification"
+      position="center top  "
       width="15%"
       ignoreDuplicates="true"
     />
