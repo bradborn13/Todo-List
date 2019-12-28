@@ -1,7 +1,28 @@
 'use strict';
+/* jshint node: true */
 
 const mongoose = require('mongoose');
 const Task = require('../models/Task');
+const List = require('../models/List');
+
+function createList(listName) {
+  var list = new List();
+  list.listName = listName;
+  list.createdAt = Date.now();
+  list.updatedAt = Date.now();
+  list.isArchived = false;
+  list.listIcon = 'none';
+  return list;
+}
+function addTaskToList(taskName, listId) {
+  var task = new Task();
+  task.task_name = taskName;
+  task.isCompleted = false;
+  task.createdAt = Date.now();
+  task.updatedAt = Date.now();
+  task.listId = listId;
+  return task;
+}
 
 exports.plugin = {
   register: (server, options) => {
@@ -9,7 +30,35 @@ exports.plugin = {
       method: 'GET',
       path: '/tasks',
       handler: (req, h) => {
-        return Task.find({ isCompleted: false }, (err, res) => {
+        return Task.find(
+          { isCompleted: false, listId: { $exists: false } },
+          (err, res) => {
+            if (err) {
+              return err;
+            }
+            return res;
+          }
+        ).sort({ updatedAt: -1 });
+      }
+    });
+    server.route({
+      method: 'GET',
+      path: '/listCollection',
+      handler: (req, h) => {
+        return List.find((err, res) => {
+          if (err) {
+            return err;
+          }
+          return res;
+        });
+      }
+    });
+    server.route({
+      method: 'POST',
+      path: '/list',
+      handler: (req, h) => {
+        var list = createList(req.payload.listName);
+        return list.save().then((err, res) => {
           if (err) {
             return err;
           }
@@ -19,6 +68,33 @@ exports.plugin = {
     });
     server.route({
       method: 'GET',
+      path: '/list/{listId}/getTasks',
+      handler: (req, h) => {
+        return Task.find({
+          listId: req.params.listId,
+          isCompleted: false
+        })
+          .sort({ updatedAt: -1 })
+          .then((err, res) => {
+            if (err) return err;
+            return res;
+          });
+      }
+    });
+    server.route({
+      method: 'POST',
+      path: '/list/{listId}/addTask',
+      handler: (req, h) => {
+        var newTask = addTaskToList(req.payload.taskName, req.params.listId);
+        return newTask.save().then((err, res) => {
+          if (err) return err;
+          return res;
+        });
+      }
+    });
+
+    server.route({
+      method: 'GET',
       path: '/tasksHistory',
       handler: (req, h) => {
         return Task.find({ isCompleted: true }, (err, res) => {
@@ -26,7 +102,7 @@ exports.plugin = {
             return err;
           }
           return res;
-        });
+        }).sort({ updatedAt: -1 });
       }
     });
     server.route({
@@ -51,8 +127,8 @@ exports.plugin = {
     });
     server.route({
       method: 'POST',
-      path: '/task',
-      handler: (req, h) => {
+      path: '/task/general',
+      handler: async (req, h) => {
         var task = new Task();
         task.task_name = req.payload.task_name;
         task.isCompleted = false;

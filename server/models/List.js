@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const TaskSchema = new Schema({
-  task_name: {
+const ListSchema = new Schema({
+  listName: {
     type: String
   },
   createdAt: {
@@ -11,11 +11,11 @@ const TaskSchema = new Schema({
   updatedAt: {
     type: Date
   },
-  isCompleted: {
+  isArchived: {
     type: Boolean
   },
-  listId: {
+  listIcon: {
     type: String
   }
 });
-module.exports = User = mongoose.model('tasks', TaskSchema);
+module.exports = Usera = mongoose.model('lists', ListSchema);
