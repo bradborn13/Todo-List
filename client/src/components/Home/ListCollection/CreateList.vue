@@ -1,3 +1,45 @@
+<script>
+/* eslint-disable */
+import axios from "axios";
+export default {
+  name: "CreateList",
+  data() {
+    return {
+      listName: ""
+    };
+  },
+  methods: {
+    switchView() {
+      this.$emit("returnView");
+    },
+    addList() {
+      if (!this.listName) {
+        return this.$notify({
+          group: "center-notification",
+          type: "error",
+          title: "Error",
+          text: `List name is required`
+        });
+      }
+
+      axios
+        .post("/api/list", { listName: this.listName })
+        .then(res => {
+          this.$emit("onListCreated", res.data._id);
+        })
+        .catch(err => {
+          this.$notify({
+            group: "corner-notification",
+            type: "error",
+            title: "Error",
+            text: `Error: ${err}`
+          });
+        });
+    }
+  }
+};
+</script>
+<style></style>
 <template>
   <div>
     <form v-on:submit.prevent="addList" class="col-lg-8 mx-auto">
@@ -26,46 +68,3 @@
     </form>
   </div>
 </template>
-
-<script>
-/* eslint-disable */
-import axios from "axios";
-export default {
-  name: "CreateList",
-  data() {
-    return {
-      listName: ""
-    };
-  },
-  methods: {
-    switchView() {
-      this.$emit("returnView");
-    },
-    addList() {
-      if (!this.listName) {
-        return this.$notify({
-          group: "center-notification",
-          type: "error",
-          title: "Error",
-          text: `List name is required`
-        });
-      }
-
-      axios
-        .post("/api/list", { listName: this.listName })
-        .then(res => {
-          this.$emit("returnView");
-        })
-        .catch(err => {
-          this.$notify({
-            group: "corner-notification",
-            type: "error",
-            title: "Error",
-            text: `Error: ${err}`
-          });
-        });
-    }
-  }
-};
-</script>
-<style></style>

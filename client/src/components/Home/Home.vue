@@ -2,6 +2,7 @@
 /* eslint-disable */
 import axios from "axios";
 import ListSection from "./ListSection";
+import CalendarSection from"./CalendarSection";
 export default {
   name: "Home",
   data() {
@@ -14,7 +15,7 @@ export default {
     };
   },
   components: {
-    ListSection
+    ListSection,CalendarSection
   },
   mounted() {
     this.getTasks();
@@ -282,11 +283,10 @@ export default {
           </td>
         </tr>
       </table>
+
     </div>
     <div class="col-lg-3">
-      <h1>Calendar</h1>
-      <br />
-      <h1>Calendar Notifications</h1>
+<CalendarSection/>
     </div>
   </div>
 </template>

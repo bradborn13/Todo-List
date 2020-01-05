@@ -18,6 +18,10 @@ export default {
     returnView() {
       this.createListView = !this.createListView;
     },
+    showCreatedList(listId) {
+      this.createListView = !this.createListView;
+      this.$emit("renderListTasks", listId);
+    },
     showListTasks(listId) {
       this.$emit("renderListTasks", listId);
     }
@@ -26,11 +30,20 @@ export default {
 </script>
 
 <template>
-  <div>
-    <div v-if="createListView"><CreateList @returnView="returnView" /></div>
+  <div >
+    <div v-if="createListView">
+      <CreateList @returnView="returnView" @onListCreated="showCreatedList" />
+    </div>
     <div v-if="!createListView">
-      <button v-on:click="returnView">New List</button>
-      <br />
+
+<section style="padding-bottom:30px ;cursor:pointer;color:#A9A9A9" v-on:click="returnView"
+> <img
+          src="../../assets/add-new-list.svg"
+          height="50px"
+          style=""
+        />
+        Create List</section>
+
       <ListCollection @showListTasks="showListTasks" />
     </div>
     <br />

@@ -1,14 +1,24 @@
 <template>
-  <div>
-    <ul>
-      <div v-for="list in listArray" v-bind:key="list._id">
-        <h2>{{ list.listName }}</h2>
-        <h3>{{ list.createdAt }}</h3>
-        <button v-on:click="showTasks(list._id)">Show</button>
+
+    <ul class="col-lg-6 mx-auto" style="
+
+text-align: left; ">
+      <div v-for="list in listArray" v-bind:key="list._id" v-on:click="showTasks(list._id)">
+             <img v-if="inView !== list._id"
+          src="../../../assets/off-list.png"
+          height="50px"
+
+        />
+               <img v-if="inView === list._id"
+          src="../../../assets/on-list.png"
+          height="50px"
+
+        /><p style="display:inline; margin-left:50px;  font-family: Times New Roman, Times, serif;
+  font-size: 30px;"> {{ list.listName }}</p>
+
         <br />
       </div>
     </ul>
-  </div>
 </template>
 
 <script>
@@ -18,6 +28,7 @@ export default {
   name: "ListCollection",
   data() {
     return {
+      inView:"default",
       listArray: []
     };
   },
@@ -42,6 +53,10 @@ export default {
         });
     },
     showTasks(listId) {
+      console.log(this.inView,'before')
+      this.inView = listId;
+            console.log(this.inView,'after')
+
       this.$emit("showListTasks", listId);
     }
   }

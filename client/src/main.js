@@ -5,11 +5,14 @@ import App from "./App";
 import router from "./router/router";
 import VueSwal from "vue-swal";
 import Notifications from "vue-notification";
+import VCalendar from "v-calendar";
 
 require("../node_modules/bootstrap/dist/css/bootstrap.css");
 Vue.config.productionTip = false;
 Vue.use(VueSwal);
 Vue.use(Notifications);
+Vue.use(VCalendar, {
+  componentPrefix: 'vc'});
 new Vue({
   el: "#app",
   router,
