@@ -1,24 +1,37 @@
 <template>
-
-    <ul class="col-lg-6 mx-auto" style="
-
-text-align: left; ">
-      <div v-for="list in listArray" v-bind:key="list._id" v-on:click="showTasks(list._id)">
-             <img v-if="inView !== list._id"
-          src="../../../assets/off-list.png"
-          height="50px"
-
-        />
-               <img v-if="inView === list._id"
-          src="../../../assets/on-list.png"
-          height="50px"
-
-        /><p style="display:inline; margin-left:50px;  font-family: Times New Roman, Times, serif;
-  font-size: 30px;"> {{ list.listName }}</p>
-
-        <br />
-      </div>
+  <div class="col-8 mx-auto">
+    <ul class="list-group">
+      <li
+        v-if="inView === 'default'"
+        class="list-group-item d-flex justify-content-between align-items-center active"
+        role="tab"
+      >Default</li>
+      <li
+        v-else
+        class="list-group-item d-flex justify-content-between align-items-center w"
+        role="tab"
+        v-on:click="showTasks('default')"
+      >Default</li>
+      <section v-for="list in listArray" v-bind:key="list._id" v-on:click="showTasks(list._id)">
+        <li
+          v-if="inView === list._id"
+          class="list-group-item d-flex justify-content-between align-items-center active"
+          role="tab"
+        >
+          {{ list.listName }}
+          <span class="badge badge-primary badge-pill">14</span>
+        </li>
+        <li
+          v-else
+          class="list-group-item d-flex justify-content-between align-items-center"
+          role="tab"
+        >
+          {{ list.listName }}
+          <span class="badge badge-primary badge-pill">14</span>
+        </li>
+      </section>
     </ul>
+  </div>
 </template>
 
 <script>
@@ -28,7 +41,7 @@ export default {
   name: "ListCollection",
   data() {
     return {
-      inView:"default",
+      inView: "default",
       listArray: []
     };
   },
@@ -40,7 +53,6 @@ export default {
       axios
         .get("/api/listCollection")
         .then(res => {
-          console.log(res);
           this.listArray = res.data;
         })
         .catch(err => {
@@ -53,10 +65,7 @@ export default {
         });
     },
     showTasks(listId) {
-      console.log(this.inView,'before')
       this.inView = listId;
-            console.log(this.inView,'after')
-
       this.$emit("showListTasks", listId);
     }
   }

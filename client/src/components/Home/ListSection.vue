@@ -23,6 +23,9 @@ export default {
       this.$emit("renderListTasks", listId);
     },
     showListTasks(listId) {
+      if(listId === 'default'){
+        return this.$emit("renderGeneralTasks");
+      }
       this.$emit("renderListTasks", listId);
     }
   }
@@ -37,6 +40,7 @@ export default {
     <div v-if="!createListView">
 
 <section style="padding-bottom:30px ;cursor:pointer;color:#A9A9A9" v-on:click="returnView"
+
 > <img
           src="../../assets/add-new-list.svg"
           height="50px"

@@ -15,12 +15,15 @@ export default {
     getTasks() {
       axios({ method: "get", url: "/api/tasksHistory" })
         .then(tasks => {
-          console.log(tasks.data);
           this.tasks = tasks.data;
         })
         .catch(err => {
-          console.log(err);
-        });
+   this.$notify({
+            group: "corner-notification",
+            type: "error",
+            title: "Error",
+            text: `Error: ${err}`
+          });        });
     },
     getDate(datetime) {
       let date = new Date(datetime).toLocaleString();

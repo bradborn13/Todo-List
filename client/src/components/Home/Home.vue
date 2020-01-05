@@ -22,21 +22,21 @@ export default {
   },
   methods: {
     getTasks() {
-      if (this.listId) {
-        return axios
-          .get(`/api/list/${this.listId}/getTasks`)
-          .then(resp => {
-            this.todos = resp.data;
-          })
-          .catch(err => {
-            this.$notify({
-              group: "corner-notification",
-              type: "error",
-              title: "Error",
-              text: `Error: ${err}`
-            });
-          });
-      }
+      // if (this.listId) {
+      //   return axios
+      //     .get(`/api/list/${this.listId}/getTasks`)
+      //     .then(resp => {
+      //       this.todos = resp.data;
+      //     })
+      //     .catch(err => {
+      //       this.$notify({
+      //         group: "corner-notification",
+      //         type: "error",
+      //         title: "Error",
+      //         text: `Error: ${err}`
+      //       });
+      //     });
+      // }
       axios({ method: "get", url: "/api/tasks" })
         .then(tasks => {
           this.todos = tasks.data;
@@ -216,7 +216,7 @@ export default {
 <template>
   <div class="row ">
     <div class="col-lg-3 mx-auto">
-      <ListSection @renderListTasks="getListTasks" />
+      <ListSection @renderListTasks="getListTasks" @renderGeneralTasks="getTasks"/>
     </div>
     <div class="col-lg-6 mx-auto">
       <form v-on:submit.prevent="addNewTask" class="col-lg-6 mx-auto">
