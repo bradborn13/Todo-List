@@ -5,18 +5,16 @@
       group="corner-notification"
       position="bottom right "
       width="15%"
-      ignoreDuplicates=notificationBoolean
+      ignoreDuplicates="true"
     />
     <notifications
       group="center-notification"
       position="center top  "
       width="15%"
-      ignoreDuplicates=notificationBoolean
+      ignoreDuplicates="true"
     />
     <Navigation />
-    <div id="musicPlayer" style="position:absolute;right:15px;top:10px">
-
-    </div>
+    <div id="musicPlayer" style="position:absolute;right:15px;top:10px"></div>
     <img
       v-if="toggleMusic"
       src="../src/assets/audio-off.svg"
@@ -45,8 +43,8 @@ export default {
   },
   data() {
     return {
-      notificationBoolean: true,
-      toggleMusic: false    };
+      toggleMusic: false
+    };
   },
   methods: {
     muteMusic() {

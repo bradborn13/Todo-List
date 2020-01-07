@@ -19,6 +19,13 @@
   margin-top: -10px;
 }
 
+.calendar-icon {
+  display: absolute;
+  height: 30px;
+  margin-left: 10px !important;
+  margin-top: -10px;
+}
+
 .task-name {
   margin-left: 20%;
 }

@@ -12,7 +12,8 @@ Vue.config.productionTip = false;
 Vue.use(VueSwal);
 Vue.use(Notifications);
 Vue.use(VCalendar, {
-  componentPrefix: 'vc'});
+  componentPrefix: "vc"
+});
 new Vue({
   el: "#app",
   router,

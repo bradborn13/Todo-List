@@ -14,9 +14,10 @@ function createList(listName) {
   list.listIcon = 'none';
   return list;
 }
-function addTaskToList(taskName, listId) {
+function addTaskToList(taskPayload, listId) {
   var task = new Task();
-  task.task_name = taskName;
+  task.task_name = taskPayload.taskName;
+  task.taskDeadline = taskPayload.taskDeadline ? taskPayload.taskDeadline : '';
   task.isCompleted = false;
   task.createdAt = Date.now();
   task.updatedAt = Date.now();
@@ -85,7 +86,9 @@ exports.plugin = {
       method: 'POST',
       path: '/list/{listId}/addTask',
       handler: (req, h) => {
-        var newTask = addTaskToList(req.payload.taskName, req.params.listId);
+        var newTask = addTaskToList(req.payload, req.params.listId);
+        console.log(req.payload.taskDeadline, 'sent to the api');
+        console.log(newTask.taskDeadline, 'savedInObject');
         return newTask.save().then((err, res) => {
           if (err) return err;
           return res;
@@ -130,6 +133,10 @@ exports.plugin = {
       path: '/task/general',
       handler: async (req, h) => {
         var task = new Task();
+        task.taskDeadline = req.payload.taskDeadline
+          ? req.payload.taskDeadline
+          : '';
+
         task.task_name = req.payload.task_name;
         task.isCompleted = false;
         task.createdAt = Date.now();
