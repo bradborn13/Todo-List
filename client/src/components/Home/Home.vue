@@ -33,7 +33,7 @@ export default {
   methods: {
     cleanForm() {
       this.taskDeadline = "";
-      this.toggleMenuTask=true;
+      this.toggleMenuTask = true;
     },
     getAllTasks() {
       if (this.listId) {
@@ -157,32 +157,29 @@ export default {
           });
         });
     },
-    generalListMainSection(){
-      if(!this.toggleMenuTask){
-this.getTasks();
-      this.toggleMenuTask = true;
+    generalListMainSection() {
+      if (!this.toggleMenuTask) {
+        this.getTasks();
+        this.toggleMenuTask = true;
       }
     },
-    listMainSection(listId){
-    if(!this.toggleMenuTask){
-this.getListTasks(listId);
-      this.toggleMenuTask = true;
+    listMainSection(listId) {
+      if (!this.toggleMenuTask) {
+        this.getListTasks(listId);
+        this.toggleMenuTask = true;
       }
-
     },
-    generalListAllSection(){
-    if(this.toggleMenuTask){
-this.getAllTasks();
-      this.toggleMenuTask = false;
+    generalListAllSection() {
+      if (this.toggleMenuTask) {
+        this.getAllTasks();
+        this.toggleMenuTask = false;
       }
-
     },
-    listAllSection(listId){
-    if(this.toggleMenuTask){
-this.getListTasksHistory(listId);
-      this.toggleMenuTask = false;
+    listAllSection(listId) {
+      if (this.toggleMenuTask) {
+        this.getListTasksHistory(listId);
+        this.toggleMenuTask = false;
       }
-
     },
     createList() {
       axios({ method: "post", url: "/api/list" })
@@ -255,7 +252,12 @@ this.getListTasksHistory(listId);
           });
         });
     },
-
+    convertDateToLocal(localDate) {
+      return moment
+        .utc(localDate)
+        .local()
+        .format("YYYY-MM-DD");
+    },
     getListTasks(listId) {
       this.cleanForm();
       axios
@@ -367,9 +369,11 @@ this.getListTasksHistory(listId);
 
           <li class="col-lg-6">
             <a
-              v-on:click="listId ? listMainSection(listId) : generalListMainSection()"
+              v-on:click="
+                listId ? listMainSection(listId) : generalListMainSection()
+              "
               :class="{
-                'selectedOption': toggleMenuTask,
+                selectedOption: toggleMenuTask
               }"
               >Main</a
             >
@@ -380,8 +384,10 @@ this.getListTasksHistory(listId);
           </li> -->
           <li class="col-lg-6">
             <a
-              v-on:click="listId ? listAllSection(listId) : generalListAllSection()"
-              :class="{'selectedOption': !toggleMenuTask}"
+              v-on:click="
+                listId ? listAllSection(listId) : generalListAllSection()
+              "
+              :class="{ selectedOption: !toggleMenuTask }"
               >All</a
             >
           </li>
@@ -403,11 +409,18 @@ this.getListTasksHistory(listId);
             <span class="task-name">{{ todo.task_name }}</span>
           </td>
           <td class="text-right">
-            <img
-              v-if="todo.taskDeadline"
-              src="../../assets/deadline-icon.svg"
-              class="completeTask"
-            />
+            <a
+              href="#"
+              data-toggle="tooltip"
+              data-placement="top"
+              :title="'Deadline: ' + convertDateToLocal(todo.taskDeadline)"
+            >
+              <img
+                v-if="todo.taskDeadline"
+                src="../../assets/deadline-icon.svg"
+                class="completeTask"
+              />
+            </a>
             <button
               v-on:click="editTask(todo.task_name, todo._id)"
               class="btn btn-outline-info"
