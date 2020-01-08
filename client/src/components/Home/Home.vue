@@ -14,9 +14,10 @@ export default {
       todos: [],
       showCalendar: true,
       taskId: "",
+      toggleMenuTask: true,
       taskName: "",
       isEdit: false,
-      // picker: new Date().toISOString().substr(0, 10),
+      listId: "",
       taskDeadline: "",
       listName: ""
     };
@@ -32,6 +33,27 @@ export default {
   methods: {
     cleanForm() {
       this.taskDeadline = "";
+      this.toggleMenuTask=true;
+    },
+    getAllTasks() {
+      if (this.listId) {
+        this.listId = "";
+      }
+      axios({ method: "get", url: "/api/tasks/all" })
+        .then(tasks => {
+          this.todos = tasks.data;
+        })
+        .catch(err => {
+          this.$notify({
+            group: "corner-notification",
+            type: "error",
+            title: "Error",
+            text: `Error: ${err}`
+          });
+        })
+        .finally(() => {
+          this.reRenderCalendar();
+        });
     },
     getTasks() {
       if (this.listId) {
@@ -72,16 +94,12 @@ export default {
           text: `Task already exists`
         });
       }
-      const isosData = this.taskDeadline.toISOString();
-      const changeData = moment.utc(isosData).local();
-      console.log(this.taskDeadline.toISOString(), "deadline");
-      console.log(changeData.format("DD/MM/YYYY HH:mm:ss"), "after convert");
 
       if (this.listId) {
         return await axios
           .post(`/api/list/${this.listId}/addTask`, {
             taskName: this.taskName,
-            taskDeadline: this.taskDeadline.toISOString()
+            taskDeadline: this.taskDeadline
           })
           .then(res => {
             this.taskName = "";
@@ -138,6 +156,33 @@ export default {
             text: `Error: ${err}`
           });
         });
+    },
+    generalListMainSection(){
+      if(!this.toggleMenuTask){
+this.getTasks();
+      this.toggleMenuTask = true;
+      }
+    },
+    listMainSection(listId){
+    if(!this.toggleMenuTask){
+this.getListTasks(listId);
+      this.toggleMenuTask = true;
+      }
+
+    },
+    generalListAllSection(){
+    if(this.toggleMenuTask){
+this.getAllTasks();
+      this.toggleMenuTask = false;
+      }
+
+    },
+    listAllSection(listId){
+    if(this.toggleMenuTask){
+this.getListTasksHistory(listId);
+      this.toggleMenuTask = false;
+      }
+
     },
     createList() {
       axios({ method: "post", url: "/api/list" })
@@ -230,6 +275,26 @@ export default {
         .finally(() => {
           this.reRenderCalendar();
         });
+    },
+    getListTasksHistory(listId) {
+      this.cleanForm();
+      axios
+        .get(`/api/list/${listId}/getAllTasks`)
+        .then(resp => {
+          this.todos = resp.data;
+          this.listId = listId;
+        })
+        .catch(err => {
+          this.$notify({
+            group: "corner-notification",
+            type: "error",
+            title: "Error",
+            text: `Error: ${err}`
+          });
+        })
+        .finally(() => {
+          this.reRenderCalendar();
+        });
     }
   }
 };
@@ -287,7 +352,41 @@ export default {
           Update
         </button>
       </form>
+      <div class="navigation col-lg-6 mx-auto">
+        <ul>
+          <!-- <li v-if="listId" class="col-lg-6">
+            <a
+              v-on:click="listId ? getListTasks(listId) : getTasks"
+              :class="{
+                selectedOption: toogleMenuTask,
+                option: !toggleMenuTask
+              }"
+              >Main</a
+            >
+          </li> -->
 
+          <li class="col-lg-6">
+            <a
+              v-on:click="listId ? listMainSection(listId) : generalListMainSection()"
+              :class="{
+                'selectedOption': toggleMenuTask,
+              }"
+              >Main</a
+            >
+          </li>
+
+          <!-- <li v-if="listId" class="col-lg-6">
+            <a v-on:click="getListTasksHistory(listId)">All</a>
+          </li> -->
+          <li class="col-lg-6">
+            <a
+              v-on:click="listId ? listAllSection(listId) : generalListAllSection()"
+              :class="{'selectedOption': !toggleMenuTask}"
+              >All</a
+            >
+          </li>
+        </ul>
+      </div>
       <table class="table">
         <tr
           v-for="todo in todos"
@@ -304,6 +403,11 @@ export default {
             <span class="task-name">{{ todo.task_name }}</span>
           </td>
           <td class="text-right">
+            <img
+              v-if="todo.taskDeadline"
+              src="../../assets/deadline-icon.svg"
+              class="completeTask"
+            />
             <button
               v-on:click="editTask(todo.task_name, todo._id)"
               class="btn btn-outline-info"
@@ -312,7 +416,7 @@ export default {
             </button>
             <button
               v-on:click="deleteTask(todo._id)"
-              class="btn btn-outline-dark"
+              class="btn btn-outline-danger"
             >
               Delete
             </button>

@@ -26,6 +26,9 @@
   margin-top: -10px;
 }
 
+.selectedOption {
+  background-color:#F1F3F4;
+}
 .task-name {
   margin-left: 20%;
 }
