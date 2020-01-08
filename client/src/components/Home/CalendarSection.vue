@@ -15,61 +15,7 @@ export default {
     return {
       currentDate: Date.now(),
       attributes: this.popultateCalendar()
-      // attributes: [
-      //   {
-      //     bar: {
-      //       color: "red",
-      //       class: "my-dot-class"
-      //     },
-      //     dates: [
-      //       new Date(2018, 0, 1), // Jan 1st
-      //       new Date(2018, 0, 10), // Jan 10th
-      //       new Date(2018, 0, 22) // Jan 22nd
-      //     ],
-      //     popover: {
-      //       label: "Lorem Epsilum",
-      //       visibility: "hover",
-      //       hideIndicator: false
-      //     }
-      //   },
-      //   {
-      //     bar: "green",
-      //     dates: [
-      //       new Date(2018, 0, 4), // Jan 4th
-      //       new Date(2018, 0, 10), // Jan 10th
-      //       new Date(2018, 0, 15) // Jan 15th
-      //     ],
-      //     popover: {
-      //       label: "Lorem Epsilum",
-      //       visibility: "hover",
-      //       hideIndicator: false
-      //     }
-      //   },
-      //   {
-      //     bar: "purple",
-      //     dates: [
-      //       new Date(2018, 0, 12), // Jan 12th
-      //       new Date(2018, 0, 26), // Jan 26th
-      //       new Date(2018, 0, 15) // Jan 15th
-      //     ],
-      //     popover: {
-      //       label: "lucian",
-      //       visibility: "hover",
-      //       hideIndicator: false
-      //     }
-      //   },
-      //   {
-      //     bar: "purple",
-      //     dates: [
-      //       new Date(2018, 0, 15) // Jan 15th
-      //     ],
-      //     popover: {
-      //       label: "ciprian",
-      //       visibility: "hover",
-      //       hideIndicator: false
-      //     }
-      //   }
-      // ]
+
     };
   },
   mounted() {
