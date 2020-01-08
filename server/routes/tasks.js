@@ -44,6 +44,18 @@ exports.plugin = {
     });
     server.route({
       method: 'GET',
+      path: '/tasks/all',
+      handler: (req, h) => {
+        return Task.find({ listId: { $exists: false } }, (err, res) => {
+          if (err) {
+            return err;
+          }
+          return res;
+        }).sort({ updatedAt: -1 });
+      }
+    });
+    server.route({
+      method: 'GET',
       path: '/listCollection',
       handler: (req, h) => {
         return List.find((err, res) => {
@@ -83,12 +95,24 @@ exports.plugin = {
       }
     });
     server.route({
+      method: 'GET',
+      path: '/list/{listId}/getAllTasks',
+      handler: (req, h) => {
+        return Task.find({
+          listId: req.params.listId
+        })
+          .sort({ updatedAt: -1 })
+          .then((err, res) => {
+            if (err) return err;
+            return res;
+          });
+      }
+    });
+    server.route({
       method: 'POST',
       path: '/list/{listId}/addTask',
       handler: (req, h) => {
         var newTask = addTaskToList(req.payload, req.params.listId);
-        console.log(req.payload.taskDeadline, 'sent to the api');
-        console.log(newTask.taskDeadline, 'savedInObject');
         return newTask.save().then((err, res) => {
           if (err) return err;
           return res;
