@@ -5,21 +5,31 @@
         v-if="inView === 'default'"
         class="list-group-item d-flex justify-content-between align-items-center active"
         role="tab"
-      >Default</li>
+      >
+        Default
+      </li>
       <li
         v-else
         class="list-group-item d-flex justify-content-between align-items-center w"
         role="tab"
         v-on:click="showTasks('default')"
-      >Default</li>
-      <section v-for="list in listArray" v-bind:key="list._id" v-on:click="showTasks(list._id)">
+      >
+        Default
+      </li>
+      <section
+        v-for="list in listArray"
+        v-bind:key="list._id"
+        v-on:click="showTasks(list._id)"
+      >
         <li
           v-if="inView === list._id"
           class="list-group-item d-flex justify-content-between align-items-center active"
           role="tab"
         >
           {{ list.listName }}
-          <span class="badge badge-primary badge-pill">14</span>
+          <span class="badge badge-primary badge-pill">{{
+            list.completedTaskCount + "/" + list.taskCount
+          }}</span>
         </li>
         <li
           v-else
@@ -27,7 +37,9 @@
           role="tab"
         >
           {{ list.listName }}
-          <span class="badge badge-primary badge-pill">14</span>
+          <span class="badge badge-secondary badge-pill">{{
+            list.completedTaskCount + "/" + list.taskCount
+          }}</span>
         </li>
       </section>
     </ul>

@@ -38,9 +38,16 @@ export default {
       <CreateList @returnView="returnView" @onListCreated="showCreatedList" />
     </div>
     <div v-if="!createListView">
-      <section style="padding-bottom:30px ;cursor:pointer;color:#A9A9A9" v-on:click="returnView">
-        <img src="../../assets/add-new-list.svg" height="50px" style="opacity:50%" />
-        Create List
+      <section
+        style="padding-bottom:30px ;cursor:pointer;color:#A9A9A9"
+        v-on:click="returnView"
+      >
+        <img
+          src="../../assets/add-new-list.svg"
+          height="50px"
+          style="color:white"
+        />
+        <div style="color:white;display:inline">Create List</div>
       </section>
 
       <ListCollection @showListTasks="showListTasks" />

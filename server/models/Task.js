@@ -20,5 +20,6 @@ const TaskSchema = new Schema({
   taskDeadline: {
     type: Date
   }
+
 });
 module.exports = User = mongoose.model('tasks', TaskSchema);

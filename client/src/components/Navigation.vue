@@ -1,9 +1,10 @@
 <template>
-  <div class="navigation col-lg-6 mx-auto">
+  <div class="navigation col-lg-6 ">
     <ul>
-      <li class="col-lg-6"><a v-on:click="redirectHome">Home</a></li>
+      <li class="col-lg-2"><a v-on:click="redirectHome">Home</a></li>
+      <li class="col-lg-1"><a v-on:click="redirectHome">|</a></li>
 
-      <li class="col-lg-6"><a v-on:click="redirectHistory">History</a></li>
+      <li class="col-lg-2"><a v-on:click="redirectHistory">History </a></li>
     </ul>
   </div>
 </template>

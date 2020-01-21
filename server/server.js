@@ -1,33 +1,36 @@
-'user strict'
-const Hapi = require('hapi')
-const mongoose = require('mongoose')
+'user strict';
+const Hapi = require('hapi');
+const mongoose = require('mongoose');
 
 const server = new Hapi.Server({
-    host: 'localhost',
-    port: 5000,
-    routes: {
-        cors: true
-    }
+  host: 'localhost',
+  port: 5000,
+  routes: {
+    cors: true
+  }
 });
 
 server.app.db = mongoose.connect('mongodb://localhost/hapitest', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false
 });
 const init = async () => {
-    await server.register({
+  await server
+    .register(
+      {
         plugin: require('./routes/tasks')
-    }, {
+      },
+      {
         routes: {
-            prefix: '/api'
+          prefix: '/api'
         }
-    }).catch(err => {
-        console.log(err);
+      }
+    )
+    .catch(err => {
+      console.log(err);
     });
-    await server.start();
-    console.log(`Server running at : ${server.info.uri}`)
-
-
+  await server.start();
+  console.log(`Server running at : ${server.info.uri}`);
 };
 init();

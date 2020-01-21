@@ -1,6 +1,37 @@
-.completeTask {
+.list-section {
+  top: 10vh;
+  position: sticky;
+}
+
+.center-section {
+  padding-top: 20px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+
+  background: white;
+}
+
+.toCompleteTask {
   height: 50%;
-  opacity: 10%;
+  opacity: 30%;
+  transition: opacity 0.5s linear;
+}
+
+.taskIsCompleted {
+  height: 50%;
+}
+
+.pendingDeadline {
+  height: 50%;
+  opacity: 30%;
+  transition: opacity 0.5s linear;
+}
+
+.pendingDeadline:hover {
+  opacity: 100%;
+}
+
+.completedDeadline {
+  height: 50%;
   transition: opacity 0.5s linear;
 }
 
@@ -8,7 +39,7 @@
   cursor: pointer;
 }
 
-.completeTask:hover {
+.toCompleteTask:hover {
   opacity: 100%;
 }
 
@@ -27,8 +58,9 @@
 }
 
 .selectedOption {
-  background-color:#F1F3F4;
+  background-color: #f1f3f4;
 }
+
 .task-name {
   margin-left: 20%;
 }

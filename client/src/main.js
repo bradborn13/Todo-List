@@ -6,14 +6,19 @@ import router from "./router/router";
 import VueSwal from "vue-swal";
 import Notifications from "vue-notification";
 import VCalendar from "v-calendar";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 
 require("../node_modules/bootstrap/dist/css/bootstrap.css");
+
 Vue.config.productionTip = false;
 Vue.use(VueSwal);
 Vue.use(Notifications);
 Vue.use(VCalendar, {
   componentPrefix: "vc"
 });
+Vue.use(Loading);
+
 new Vue({
   el: "#app",
   router,

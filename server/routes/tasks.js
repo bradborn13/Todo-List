@@ -24,9 +24,36 @@ function addTaskToList(taskPayload, listId) {
   task.listId = listId;
   return task;
 }
+async function countTaskStatus(listArray) {
+  const listArr = [];
+  for (let index = 0; index < listArray.length; index++) {
+    const loopedObject = listArray[index];
+    await Task.countDocuments(
+      { listId: loopedObject._id },
+      async (err, resp) => {
+        if (err) {
+          return err;
+        }
+        loopedObject.taskCount = resp;
+      }
+    );
+    await Task.countDocuments(
+      { listId: loopedObject._id, isCompleted: true },
+      async (err, resp) => {
+        if (err) {
+          return err;
+        }
+        loopedObject.completedTaskCount = resp;
+      }
+    );
+    listArr.push(loopedObject);
+  }
+
+  return listArray;
+}
 
 exports.plugin = {
-  register: (server, options) => {
+  register: async (server, options) => {
     server.route({
       method: 'GET',
       path: '/tasks',
@@ -57,13 +84,47 @@ exports.plugin = {
     server.route({
       method: 'GET',
       path: '/listCollection',
-      handler: (req, h) => {
-        return List.find((err, res) => {
+      handler: async (req, h) => {
+        const customListArray = [];
+        let queryResult = [];
+        await List.find((err, res) => {
           if (err) {
             return err;
           }
-          return res;
+          queryResult = res;
         });
+        const dataPars = await countTaskStatus(queryResult);
+        return dataPars;
+      }
+    });
+    server.route({
+      method: 'GET',
+      path: '/list/{listId}/generalNotification',
+      handler: (req, h) => {
+        return Task.find({ listId: req.params.listId })
+          .sort({ updatedAt: -1 })
+          .limit(4)
+          .then((err, res) => {
+            if (err) {
+              return err;
+            }
+            return res;
+          });
+      }
+    });
+    server.route({
+      method: 'GET',
+      path: '/general/notification',
+      handler: (req, h) => {
+        return Task.find({ listId: { $exists: false } })
+          .sort({ updatedAt: -1 })
+          .limit(4)
+          .then((err, res) => {
+            if (err) {
+              return err;
+            }
+            return res;
+          });
       }
     });
     server.route({

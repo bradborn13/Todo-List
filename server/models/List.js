@@ -16,6 +16,14 @@ const ListSchema = new Schema({
   },
   listIcon: {
     type: String
+  }, 
+   taskCount:{
+    type:Number,
+    default:null
+  },
+  completedTaskCount:{
+    type:Number,
+    default:null
   }
 });
 module.exports = Usera = mongoose.model('lists', ListSchema);

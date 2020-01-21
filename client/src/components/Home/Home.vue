@@ -3,6 +3,7 @@
 import axios from "axios";
 import ListSection from "./ListSection";
 import * as moment from "moment";
+import Loading from "vue-loading-overlay";
 
 import CalendarSection from "./CalendarSection";
 // import { Datetime } from "vue-datetime";
@@ -11,6 +12,13 @@ export default {
   name: "Home",
   data() {
     return {
+      loaderSettings: {
+        color: "#ADFF2F",
+        loader: "spinner",
+        height: 150,
+        width: 150
+      },
+      isLoading: false,
       todos: [],
       showCalendar: true,
       taskId: "",
@@ -23,7 +31,7 @@ export default {
     };
   },
   components: {
-    // Datetime,
+    Loading,
     ListSection,
     CalendarSection
   },
@@ -75,6 +83,12 @@ export default {
           this.reRenderCalendar();
         });
     },
+    // componentIsLoading() {
+    //   this.isLoading = true;
+    //   setTimeout(() => {
+    //     this.isLoading = false;
+    //   }, 5000);
+    // },
     async addNewTask() {
       if (!this.taskName) {
         return this.$notify({
@@ -135,6 +149,7 @@ export default {
           this.cleanForm();
         });
     },
+
     completeTask(taskId) {
       axios({ method: "put", url: `/api/task/${taskId}/complete` })
         .then(res => {
@@ -159,26 +174,34 @@ export default {
     },
     generalListMainSection() {
       if (!this.toggleMenuTask) {
+        this.isLoading = true;
         this.getTasks();
         this.toggleMenuTask = true;
+        this.isLoading = false;
       }
     },
     listMainSection(listId) {
       if (!this.toggleMenuTask) {
+        this.isLoading = true;
         this.getListTasks(listId);
         this.toggleMenuTask = true;
+        this.isLoading = false;
       }
     },
     generalListAllSection() {
       if (this.toggleMenuTask) {
+        this.isLoading = true;
         this.getAllTasks();
         this.toggleMenuTask = false;
+        this.isLoading = false;
       }
     },
     listAllSection(listId) {
       if (this.toggleMenuTask) {
+        this.isLoading = true;
         this.getListTasksHistory(listId);
         this.toggleMenuTask = false;
+        this.isLoading = false;
       }
     },
     createList() {
@@ -307,13 +330,48 @@ export default {
 
 <template>
   <div class="row">
+    <loading
+      :active.sync="isLoading"
+      :can-cancel="true"
+      :is-full-page="false"
+      :color="loaderSettings.color"
+      :loader="loaderSettings.loader"
+      :height="loaderSettings.height"
+      :width="loaderSettings.width"
+    ></loading>
     <div class="col-lg-3 mx-auto">
       <ListSection
         @renderListTasks="getListTasks"
         @renderGeneralTasks="getTasks"
+        class="list-section"
       />
     </div>
-    <div class="col-lg-6 mx-auto">
+    <div class="col-lg-6 mx-auto center-section">
+      <div class="navigation col-lg-6 mx-auto">
+        <ul>
+          <li class="col-lg-6">
+            <a
+              v-on:click="
+                listId ? listMainSection(listId) : generalListMainSection()
+              "
+              :class="{
+                selectedOption: toggleMenuTask
+              }"
+              >Main</a
+            >
+          </li>
+
+          <li class="col-lg-6">
+            <a
+              v-on:click="
+                listId ? listAllSection(listId) : generalListAllSection()
+              "
+              :class="{ selectedOption: !toggleMenuTask }"
+              >All</a
+            >
+          </li>
+        </ul>
+      </div>
       <form v-on:submit.prevent="addNewTask" class="col-lg-6 mx-auto">
         <div style="display:flex">
           <img
@@ -322,21 +380,23 @@ export default {
             v-on:click="resetInput()"
             class="clearUpdate"
           />
-          <input
-            v-model="taskName"
-            class="form-control"
-            id="taskNameInput"
-            placeholder="Add New Task"
-            listId
-          /><vc-date-picker
-            v-model="taskDeadline"
-            :popover="{ placement: 'bottom', visibility: 'hover' }"
-          >
-            <img src="../../assets/calendar.svg" class="calendar-icon" />
-          </vc-date-picker>
+          <div class="col-md-12">
+            <input
+              v-model="taskName"
+              class="form-control"
+              id="taskNameInput"
+              placeholder="Add New Task"
+              listId
+            />
+            <vc-date-picker
+              v-model="taskDeadline"
+              :popover="{ placement: 'bottom', visibility: 'hover' }"
+            >
+              <img src="../../assets/calendar.svg" class="calendar-icon" />
+            </vc-date-picker>
+          </div>
         </div>
         <!-- <vc-date-picker v-if="showDeadline"></vc-date-picker> -->
-
         <button
           v-if="this.isEdit == false"
           type="submit"
@@ -354,46 +414,8 @@ export default {
           Update
         </button>
       </form>
-      <div class="navigation col-lg-6 mx-auto">
-        <ul>
-          <!-- <li v-if="listId" class="col-lg-6">
-            <a
-              v-on:click="listId ? getListTasks(listId) : getTasks"
-              :class="{
-                selectedOption: toogleMenuTask,
-                option: !toggleMenuTask
-              }"
-              >Main</a
-            >
-          </li> -->
 
-          <li class="col-lg-6">
-            <a
-              v-on:click="
-                listId ? listMainSection(listId) : generalListMainSection()
-              "
-              :class="{
-                selectedOption: toggleMenuTask
-              }"
-              >Main</a
-            >
-          </li>
-
-          <!-- <li v-if="listId" class="col-lg-6">
-            <a v-on:click="getListTasksHistory(listId)">All</a>
-          </li> -->
-          <li class="col-lg-6">
-            <a
-              v-on:click="
-                listId ? listAllSection(listId) : generalListAllSection()
-              "
-              :class="{ selectedOption: !toggleMenuTask }"
-              >All</a
-            >
-          </li>
-        </ul>
-      </div>
-      <table class="table">
+      <table class="table col-lg-12 list-content">
         <tr
           v-for="todo in todos"
           v-bind:key="todo._id"
@@ -401,10 +423,12 @@ export default {
         >
           <td class="text-left">
             <img
-              v-if="!todo.completedAt"
               src="../../assets/check.svg"
-              class="completeTask"
-              @click="completeTask(todo._id)"
+              :class="{
+                taskIsCompleted: todo.isCompleted,
+                toCompleteTask: !todo.isCompleted
+              }"
+              @click="todo.completedAt ? '' : completeTask(todo._id)"
             />
             <span class="task-name">{{ todo.task_name }}</span>
           </td>
@@ -418,7 +442,10 @@ export default {
               <img
                 v-if="todo.taskDeadline"
                 src="../../assets/deadline-icon.svg"
-                class="completeTask"
+                :class="{
+                  pendingDeadline: !todo.isCompleted,
+                  completedDeadline: todo.isCompleted
+                }"
               />
             </a>
             <button
@@ -437,8 +464,13 @@ export default {
         </tr>
       </table>
     </div>
-    <div class="col-lg-3">
-      <CalendarSection v-if="showCalendar" :taskList="todos" />
+    <div class="col-lg-3 mx-auto">
+      <CalendarSection
+        v-if="showCalendar"
+        :taskList="todos"
+        :currentListId="listId"
+        class="list-section"
+      />
     </div>
   </div>
 </template>
