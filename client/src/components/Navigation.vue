@@ -9,29 +9,26 @@
   </div>
 </template>
 
-<script>
-/* eslint-disable */
-import axios from "axios";
-export default {
-  name: "Navigation",
-  data() {
-    return {
-      pageInView: ""
-    };
-  },
-  methods: {
-    redirectHome() {
-      if (this.$route.path === "/") {
-        return this.$router.go();
-      }
-      this.$router.push({ path: "/" }).catch(err => {});
-    },
-    redirectHistory() {
-      this.$router.push({ path: "/history" }).catch(err => {});
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+
+@Component
+export default class Navigation extends Vue {
+  pageInView: string = '';
+
+  redirectHome() {
+    if (this.$route.path === '/') {
+      return this.$router.go(-1);
     }
+    this.$router.push({ path: '/' });
   }
-};
+  redirectHistory() {
+    this.$router.push({ path: '/history' });
+  }
+}
 </script>
-<style>
-@import "../styling/Navigation.css";
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+@import '../assets/css/navigation.css';
 </style>

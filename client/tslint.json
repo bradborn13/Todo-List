@@ -1,0 +1,63 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-config-standard",
+    "tslint-consistent-codestyle"
+  ],
+  "rules": {
+    "trailing-comma": [
+      false,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
+    ],
+
+    "quotemark": [true, "single", "avoid-escape"],
+    "object-literal-sort-keys": false,
+
+    "no-console": false,
+    "no-empty": true,
+    "member-access": false,
+    "compilerOptions": {
+      "skipLibCheck": true
+    },
+    "max-line-length": [false],
+    "no-submodule-imports": false,
+    "semicolon": [true, "always", "ignore-interfaces"],
+    "no-var-requires": false,
+    "indent": true,
+    "ban-types": false,
+    "forin": false,
+    "no-angle-bracket-type-assertion": false,
+    "whitespace": true,
+    "interface-name": false,
+    "ordered-imports": false,
+    "space-before-function-paren": [
+      true,
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "no-implicit-dependencies": [false, ["@src", "@app", "~"]],
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "public-static-field",
+          "public-instance-field",
+          "public-constructor",
+          "private-static-field",
+          "private-instance-field",
+          "private-constructor",
+          "public-instance-method",
+          "protected-instance-method",
+          "private-instance-method"
+        ]
+      }
+    ]
+  }
+}

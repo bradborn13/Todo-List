@@ -1,0 +1,30 @@
+.navigation {
+    margin-bottom: 30px;
+    width: 500px;
+    position: sticky;
+}
+
+.navigation ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    color: black;
+}
+
+.navigation li {
+    float: left;
+}
+
+.navigation li a {
+    display: block;
+    text-decoration-color: red;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navigation li a:hover {
+    text-decoration: underline !important;
+    cursor: pointer;
+}

@@ -1,30 +1,29 @@
-/ignore
 <template>
   <div id="app">
     <notifications
       group="corner-notification"
       position="bottom right "
       width="15%"
-      ignoreDuplicates="true"
+      v-bind:ignoreDuplicates="ignoreDuplicates"
     />
     <notifications
       group="center-notification"
       position="center top  "
       width="15%"
-      ignoreDuplicates="true"
+      v-bind:ignoreDuplicates="ignoreDuplicates"
     />
     <Navigation />
     <div id="musicPlayer" style="position:absolute;right:15px;top:10px"></div>
     <img
       v-if="toggleMusic"
-      src="../src/assets/audio-off.svg"
+      src=""
       height="25px"
       style="position:absolute;right:15px;top:10px"
       v-on:click="muteMusic"
     />
     <img
       v-if="!toggleMusic"
-      src="../src/assets/audio-on.svg"
+      src=""
       height="25px"
       style="position:absolute;right:15px;top:10px"
       v-on:click="startMusic"
@@ -34,26 +33,32 @@
   </div>
 </template>
 
-<script>
-import Navigation from "../src/components/Navigation";
-export default {
-  name: "App",
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+// import HelloWorld from './components/HelloWorld.vue';
+import Navigation from './components/Navigation.vue';
+
+@Component({
   components: {
     Navigation
-  },
-  data() {
-    return {
-      toggleMusic: false
-    };
-  },
-  methods: {
-    muteMusic() {
-      this.toggleMusic = !this.toggleMusic;
-      document.getElementById("musicPlayer").innerHTML = "";
-    },
-    startMusic() {
-      this.toggleMusic = !this.toggleMusic;
-      document.getElementById("musicPlayer").innerHTML = ` <iframe
+  }
+})
+export default class App extends Vue {
+  ignoreDuplicates: boolean = true;
+  toggleMusic: boolean = false;
+
+  muteMusic() {
+    this.toggleMusic = !this.toggleMusic;
+    const musicPlayer = document.getElementById('musicPlayer');
+    if (musicPlayer) {
+      musicPlayer.innerHTML = '';
+    }
+  }
+  startMusic() {
+    this.toggleMusic = !this.toggleMusic;
+    const musicPlayer = document.getElementById('musicPlayer');
+    if (musicPlayer) {
+      musicPlayer.innerHTML = ` <iframe
         width="1"
         height="1"
         wmode="transparent"
@@ -63,9 +68,8 @@ export default {
       />`;
     }
   }
-};
+}
 </script>
-
 <style>
 body {
   background: #84cfee;
@@ -74,7 +78,7 @@ body {
   width: auto;
 }
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

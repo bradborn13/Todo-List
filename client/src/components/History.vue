@@ -1,39 +1,3 @@
-<script>
-/* eslint-disable */
-import axios from "axios";
-export default {
-  name: "History",
-  data() {
-    return {
-      tasks: []
-    };
-  },
-  mounted() {
-    this.getTasks();
-  },
-  methods: {
-    getTasks() {
-      axios({ method: "get", url: "/api/tasksHistory" })
-        .then(tasks => {
-          this.tasks = tasks.data;
-        })
-        .catch(err => {
-   this.$notify({
-            group: "corner-notification",
-            type: "error",
-            title: "Error",
-            text: `Error: ${err}`
-          });        });
-    },
-    getDate(datetime) {
-      let date = new Date(datetime).toLocaleString();
-
-      return date;
-    }
-  }
-};
-</script>
-
 <template>
   <h1>
     <div class="col-lg-8 mx-auto">
@@ -58,3 +22,39 @@ export default {
     </div>
   </h1>
 </template>
+
+<script lang="ts">
+import axios from '@/config/axios-config';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+
+@Component
+export default class History extends Vue {
+  tasks: any[] = [];
+  mounted() {
+    this.getTasks();
+  }
+  getTasks() {
+    axios({ method: 'get', url: '/api/tasksHistory' })
+      .then((tasks) => {
+        this.tasks = tasks.data;
+      })
+      .catch((err) => {
+        this.$notify({
+          group: 'corner-notification',
+          type: 'error',
+          title: 'Error',
+          text: `Error: ${err}`
+        });
+      });
+  }
+  getDate(datetime: Date) {
+    const date = new Date(datetime).toLocaleString();
+    return date;
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+@import '../assets/css/navigation.css';
+</style>
