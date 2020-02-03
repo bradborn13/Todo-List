@@ -48,21 +48,32 @@
 
 <script lang="ts">
 /* eslint-disable */
-import axios from '@/config/axios-config';
+import { GlobalMutationKeys } from '../../../store/mutations';
+import { store } from '../../../store/index';
 import { Component, Vue } from 'vue-property-decorator';
+import { ListNavigationActionKeys } from '../../../store/ListNavigation/ListNavigation.actions';
+import { ListNavigationGetterKeys } from '../../../store/ListNavigation/ListNavigation.getters';
+import { Getter, namespace } from 'vuex-class';
+import { ModuleNames } from '../../../store/types';
+
+const NavbarGetter = namespace(ModuleNames.listNav);
+
 @Component
 export default class ListTab extends Vue {
   inView: string = 'default';
-  listArray: any[] = [];
+  @NavbarGetter.Getter(ListNavigationGetterKeys.getListCollection)
+  listArray!: any[];
   mounted() {
     this.getLists();
   }
   getLists() {
-    axios
-      .get('/api/listCollection')
-      .then((res) => {
-        this.listArray = res.data;
-      })
+    const getListCollection = [
+      ModuleNames.listNav,
+      ListNavigationActionKeys.getListCollection
+    ].join('/');
+    store
+      .dispatch(getListCollection)
+      .then((res) => {})
       .catch((err) => {
         this.$notify({
           group: 'corner-notification',
@@ -74,7 +85,14 @@ export default class ListTab extends Vue {
   }
   showTasks(listId) {
     this.inView = listId;
-    this.$emit('showListTasks', listId);
+    if (listId !== 'default') {
+      store.commit(GlobalMutationKeys.setDashboardFilterByList);
+      store.commit(GlobalMutationKeys.setCustomListId, listId);
+    }
+    if (listId === 'default') {
+      store.commit(GlobalMutationKeys.setDashboardUnfiltered);
+    }
+    this.$emit('showListTasks');
   }
 }
 </script>

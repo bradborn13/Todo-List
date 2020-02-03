@@ -7,6 +7,8 @@ import axios from '@/config/axios-config';
 import * as moment from 'moment';
 import Loading from 'vue-loading-overlay';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { GlobalGetterKeys } from '../../../store/getters';
+import { Getter } from 'vuex-class';
 @Component({
   name: 'ListNavigation',
   components: {
@@ -15,6 +17,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
   }
 })
 export default class ListNavigation extends Vue {
+  @Getter(GlobalGetterKeys.getDashboardDataFilteredStatus)
+  isListFiltered: boolean;
   createListView: boolean = false;
 
   public returnView() {
@@ -22,13 +26,13 @@ export default class ListNavigation extends Vue {
   }
   showCreatedList(listId) {
     this.createListView = !this.createListView;
-    this.$emit('renderListTasks', listId);
+    this.$emit('renderListTasks');
   }
-  showListTasks(listId) {
-    if (listId === 'default') {
+  showListTasks() {
+    if (!this.isListFiltered) {
       return this.$emit('renderGeneralTasks');
     }
-    this.$emit('renderListTasks', listId);
+    this.$emit('renderListTasks');
   }
 }
 </script>

@@ -13,6 +13,7 @@ export default async function getCustomListData(
     axios
       .get(`/api/list/${listId}/getTasks`)
       .then(async (tasks) => {
+        await commit(GlobalMutationKeys.setCustomListId, listId);
         await commit(GlobalMutationKeys.setDashboardFilterByList);
         await commit(GlobalMutationKeys.dashboardData, tasks.data);
         return resolve();

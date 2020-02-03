@@ -6,11 +6,13 @@ export enum GlobalGetterKeys {
   'getGeneralList' = 'getGeneralList',
   'getVersionState' = 'getVersionState',
   'getDashboardListData' = 'getDashboardListData',
-  'getDashboardDataFilteredStatus' = 'getDashboardDataFilteredStatus'
+  'getDashboardDataFilteredStatus' = 'getDashboardDataFilteredStatus',
+  'getCustomListId' = 'getCustomListId'
 }
 export const getters: GetterTree<RootState, IRootState> = {
   getGeneralList: (state) => state.generalListState,
   getVersionState: (state) => state.generalListState.version,
   getDashboardListData: (state) => state.dashboardListData,
-  getDashboardDataFilteredStatus: (state) => state.isDashboardDataFiltered
+  getDashboardDataFilteredStatus: (state) => state.isDashboardDataFiltered,
+  getCustomListId: (state) => state.customListId
 };

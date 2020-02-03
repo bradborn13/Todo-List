@@ -1,14 +1,15 @@
 <script lang="ts">
-import axios from '@/config/axios-config';
 import ListNavigation from './subcomponents/Home/ListNavigation.vue';
 import * as moment from 'moment';
 import Loading from 'vue-loading-overlay';
+import AddTask from './subcomponents/Home/AddTask.vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import CalendarSection from './subcomponents/Home/CalendarSection.vue';
 import { Datetime } from 'vue-datetime';
 import { Action, Getter, namespace } from 'vuex-class';
 import { GlobalActionKeys } from '../store/actions';
 import { GlobalGetterKeys } from '../store/getters';
+import { ITask } from '../store/types';
 import { store } from '../store';
 @Component({
   name: 'Home',
@@ -16,33 +17,33 @@ import { store } from '../store';
     ListNavigation,
     CalendarSection,
     Loading,
-    Datetime
+    Datetime,
+    AddTask
   }
 })
 export default class Home extends Vue {
-  @Getter getVersionState!: number;
   loaderSettings: {} = {
     color: '#ADFF2F',
     loader: 'spinner',
     height: 150,
     width: 150
   };
-  @Getter(GlobalGetterKeys.getDashboardListData) todos: any;
+  @Getter(GlobalGetterKeys.getDashboardListData) todos!: any;
+  @Getter(GlobalGetterKeys.getCustomListId) listId!: string;
+  @Getter(GlobalGetterKeys.getDashboardDataFilteredStatus)
+  isDashboardFiltered!: boolean;
+
+  taskToEdit: string = '';
   isLoading: boolean = false;
-  showCalendar: boolean = true;
-  taskId: string = '';
+  showCalendarComponent: boolean = true;
+  showAddTaskComponent: boolean = false;
   toggleMenuTask: boolean = true;
-  taskName: string = '';
-  isEdit: boolean = false;
-  listId: string = '';
-  taskDeadline: string = '';
-  listName: string = '';
+  listName: string = ''; // -- not used
 
   mounted() {
-    this.getTasks();
+    this.getGeneralListData();
   }
   cleanForm() {
-    this.taskDeadline = '';
     this.toggleMenuTask = true;
   }
   getGeneralListHistory() {
@@ -64,11 +65,10 @@ export default class Home extends Vue {
         this.reRenderCalendar();
       });
   }
-  getTasks() {
+  getGeneralListData() {
     store
       .dispatch(GlobalActionKeys.getGeneralListData)
       .then((result) => {
-        console.log(result, ' data resulted');
         // this.todos = result.data;
       })
       .catch((err) => {
@@ -82,21 +82,6 @@ export default class Home extends Vue {
       .finally(() => {
         this.reRenderCalendar();
       });
-    // axios({ method: 'get', url: '/api/tasks' })
-    //   .then((tasks) => {
-    //     this.todos = tasks.data;
-    //   })
-    //   .catch((err) => {
-    //     this.$notify({
-    //       group: 'corner-notification',
-    //       type: 'error',
-    //       title: 'Error',
-    //       text: `Error: ${err}`
-    //     });
-    //   })
-    //   .finally(() => {
-    //     this.reRenderCalendar();
-    //   });
   }
   // componentIsLoading() {
   //   this.isLoading = true;
@@ -104,73 +89,14 @@ export default class Home extends Vue {
   //     this.isLoading = false;
   //   }, 5000);
   // },
-  async addNewTask() {
-    if (!this.taskName) {
-      return this.$notify({
-        group: 'center-notification',
-        type: 'error',
-        title: 'Error',
-        text: `Task name is required`
-      });
-    }
-    const filter = this.todos.filter((x) => x.task_name === this.taskName);
-
-    if (filter.length > 0) {
-      return this.$notify({
-        group: 'center-notification',
-        type: 'error',
-        title: 'Error',
-        text: `Task already exists`
-      });
-    }
-
-    if (this.listId) {
-      return axios
-        .post(`/api/list/${this.listId}/addTask`, {
-          taskName: this.taskName,
-          taskDeadline: this.taskDeadline
-        })
-        .then((res) => {
-          this.taskName = '';
-          this.getListTasks(this.listId);
-        })
-        .catch((err) => {
-          this.$notify({
-            group: 'corner-notification',
-            type: 'error',
-            title: 'Error',
-            text: `Error: ${err}`
-          });
-        });
-    }
-    axios
-      .post('/api/task/general', {
-        task_name: this.taskName,
-        taskDeadline: this.taskDeadline
-      })
-      .then((res) => {
-        this.taskName = '';
-        this.getTasks();
-      })
-      .catch((err) => {
-        this.$notify({
-          group: 'corner-notification',
-          type: 'error',
-          title: 'Error',
-          text: `Error: ${err}`
-        });
-      })
-      .finally(() => {
-        this.cleanForm();
-      });
-  }
 
   completeTask(taskId: string) {
-    axios({ method: 'put', url: `/api/task/${taskId}/complete` })
+    store
+      .dispatch(GlobalActionKeys.completeTask, taskId)
       .then((res) => {
-        this.taskName = '';
-
-        this.listId ? this.getListTasks(this.listId) : this.getTasks();
+        this.isDashboardFiltered
+          ? this.getCustomListData()
+          : this.getGeneralListData();
         return this.$notify({
           group: 'corner-notification',
           type: 'success',
@@ -190,20 +116,20 @@ export default class Home extends Vue {
   generalListMainSection() {
     if (!this.toggleMenuTask) {
       this.isLoading = true;
-      this.getTasks();
+      this.getGeneralListData();
       this.toggleMenuTask = true;
       this.isLoading = false;
     }
   }
-  listMainSection(listId: string) {
+  customListMainSection(listId: string) {
     if (!this.toggleMenuTask) {
       this.isLoading = true;
-      this.getListTasks(listId);
+      this.getCustomListData();
       this.toggleMenuTask = true;
       this.isLoading = false;
     }
   }
-  generalListAllSection() {
+  generalListHistory() {
     if (this.toggleMenuTask) {
       this.isLoading = true;
       this.getGeneralListHistory();
@@ -211,31 +137,28 @@ export default class Home extends Vue {
       this.isLoading = false;
     }
   }
-  listAllSection(listId: string) {
+  customListHistory(listId: string) {
     if (this.toggleMenuTask) {
       this.isLoading = true;
-      this.getListTasksHistory(listId);
+      this.getCustomListHistory(listId);
       this.toggleMenuTask = false;
       this.isLoading = false;
     }
   }
-  createList() {
-    axios({ method: 'post', url: '/api/list' })
-      .then((tasks) => {})
-      .catch((err) => {
-        this.$notify({
-          group: 'corner-notification',
-          type: 'error',
-          title: 'Error',
-          text: `Error: ${err}`
-        });
-      });
+  getListData() {
+    this.isDashboardFiltered
+      ? this.toggleMenuTask
+        ? this.getCustomListData()
+        : this.getCustomListHistory(this.listId)
+      : this.toggleMenuTask
+      ? this.getGeneralListData()
+      : this.getGeneralListHistory();
   }
   deleteTask(taskId: string) {
-    axios({ method: 'delete', url: `/api/task/${taskId}` })
+    store
+      .dispatch(GlobalActionKeys.deleteTask, taskId)
       .then((res) => {
-        this.taskName = '';
-        this.getTasks();
+        this.getListData();
         this.$notify({
           group: 'corner-notification',
           type: 'success',
@@ -252,57 +175,32 @@ export default class Home extends Vue {
         });
       });
   }
-  resetInput() {
-    this.isEdit = false;
-    this.taskName = '';
+
+  editTask(taskId: string) {
+    this.taskToEdit = taskId;
+    this.showAddTaskComponent
+      ? this.reRenderAddTask()
+      : this.toggleAddTaskComponent();
   }
-  editTask(task_name: string, taskId: string) {
-    this.taskId = taskId;
-    this.taskName = task_name;
-    this.isEdit = true;
-  }
+
   reRenderCalendar() {
-    this.showCalendar = !this.showCalendar;
+    this.showCalendarComponent = !this.showCalendarComponent;
     this.$nextTick(() => {
-      this.showCalendar = !this.showCalendar;
+      this.showCalendarComponent = !this.showCalendarComponent;
     });
   }
-  updateTask() {
-    axios
-      .put(`/api/task/${this.taskId}`, { task_name: this.taskName })
-      .then((res) => {
-        this.taskName = '';
-        this.isEdit = false;
-        this.getTasks();
-        this.$notify({
-          group: 'corner-notification',
-          type: 'success',
-          title: 'Notification',
-          text: 'Task Updated!'
-        });
-      })
-      .catch((err) => {
-        this.$notify({
-          group: 'corner-notification',
-          type: 'error',
-          title: 'Error',
-          text: `Error: ${err}`
-        });
-      });
-  }
+
   convertDateToLocal(localDate: string) {
     return moment
       .utc(localDate)
       .local()
       .format('YYYY-MM-DD');
   }
-  getListTasks(listId: string) {
+  getCustomListData() {
     this.cleanForm();
     store
-      .dispatch(GlobalActionKeys.getCustomListData, listId)
-      .then((resp) => {
-        this.listId = listId;
-      })
+      .dispatch(GlobalActionKeys.getCustomListData, this.listId)
+      .then((resp) => {})
       .catch((err) => {
         this.$notify({
           group: 'corner-notification',
@@ -315,14 +213,32 @@ export default class Home extends Vue {
         this.reRenderCalendar();
       });
   }
-  getListTasksHistory(listId: string) {
+  handleTaskAddedOrUpdate() {
+    if (this.isDashboardFiltered) {
+      this.getCustomListData();
+      return this.toggleAddTaskComponent();
+
+      // reload dashobard using custom list get method
+    }
+    this.getGeneralListData();
+    this.toggleAddTaskComponent();
+
+    // reload dashobard using general list get method
+  }
+  toggleAddTaskComponent() {
+    this.showAddTaskComponent = !this.showAddTaskComponent;
+  }
+  reRenderAddTask() {
+    this.showAddTaskComponent = false;
+    return this.$nextTick(() => {
+      this.showAddTaskComponent = true;
+    });
+  }
+  getCustomListHistory(listId: string) {
     this.cleanForm();
-    axios
-      .get(`/api/list/${listId}/getAllTasks`)
-      .then((resp) => {
-        this.todos = resp.data;
-        this.listId = listId;
-      })
+    store
+      .dispatch(GlobalActionKeys.getCustomListHistory, listId)
+      .then((resp) => {})
       .catch((err) => {
         this.$notify({
           group: 'corner-notification',
@@ -354,8 +270,8 @@ export default class Home extends Vue {
     ></loading>
     <div class="col-lg-3 mx-auto">
       <ListNavigation
-        @renderListTasks="getListTasks"
-        @renderGeneralTasks="getTasks"
+        @renderListTasks="getCustomListData"
+        @renderGeneralTasks="getGeneralListData"
         class="list-section"
       />
     </div>
@@ -365,7 +281,9 @@ export default class Home extends Vue {
           <li class="col-lg-6">
             <a
               v-on:click="
-                listId ? listMainSection(listId) : generalListMainSection()
+                isDashboardFiltered
+                  ? customListMainSection(listId)
+                  : generalListMainSection()
               "
               :class="{
                 selectedOption: toggleMenuTask
@@ -377,7 +295,9 @@ export default class Home extends Vue {
           <li class="col-lg-6">
             <a
               v-on:click="
-                listId ? listAllSection(listId) : generalListAllSection()
+                isDashboardFiltered
+                  ? customListHistory(listId)
+                  : generalListHistory()
               "
               :class="{ selectedOption: !toggleMenuTask }"
               >All</a
@@ -385,48 +305,18 @@ export default class Home extends Vue {
           </li>
         </ul>
       </div>
-      <form v-on:submit.prevent="addNewTask" class="col-lg-6 mx-auto">
-        <div style="display:flex">
-          <img
-            v-if="this.isEdit !== false"
-            src
-            v-on:click="resetInput()"
-            class="clearUpdate"
-          />
-          <div class="col-md-12">
-            <input
-              v-model="taskName"
-              class="form-control"
-              id="taskNameInput"
-              placeholder="Add New Task"
-              listId
-            />
-            <vc-date-picker
-              v-model="taskDeadline"
-              :popover="{ placement: 'bottom', visibility: 'hover' }"
-            >
-              <img src class="calendar-icon" />
-            </vc-date-picker>
-          </div>
-        </div>
-        <!-- <vc-date-picker v-if="showDeadline"></vc-date-picker> -->
-        <button
-          v-if="this.isEdit == false"
-          type="submit"
-          class="btn btn-outline-primary btn-block mt-3 mb-4"
-        >
-          Submit
-        </button>
-
-        <button
-          v-else
-          type="button"
-          v-on:click="updateTask()"
-          class="btn btn-primary btn-block mt-3 mb-4"
-        >
-          Update
-        </button>
-      </form>
+      <div v-if="!showAddTaskComponent">
+        <img
+          src="../assets/add-new-list.svg"
+          class="calendar-icon"
+          v-on:click="toggleAddTaskComponent"
+        />
+      </div>
+      <AddTask
+        v-if="showAddTaskComponent"
+        @handleSuccessOperation="handleTaskAddedOrUpdate"
+        :editTaskWithId="taskToEdit"
+      />
 
       <table class="table col-lg-12 list-content">
         <tr
@@ -436,7 +326,7 @@ export default class Home extends Vue {
         >
           <td class="text-left">
             <img
-              src
+              src="../assets/check.svg"
               :class="{
                 taskIsCompleted: todo.isCompleted,
                 toCompleteTask: !todo.isCompleted
@@ -462,7 +352,7 @@ export default class Home extends Vue {
               />
             </a>
             <button
-              v-on:click="editTask(todo.task_name, todo._id)"
+              v-on:click="editTask(todo._id)"
               class="btn btn-outline-info"
             >
               Edit
@@ -479,7 +369,7 @@ export default class Home extends Vue {
     </div>
     <div class="col-lg-3 mx-auto">
       <CalendarSection
-        v-if="showCalendar"
+        v-if="showCalendarComponent"
         :taskList="todos"
         :currentListId="listId"
         class="list-section"

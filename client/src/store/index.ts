@@ -4,7 +4,7 @@ import RootState from './state';
 import { mutations } from './mutations';
 import { actions } from './actions';
 import { getters } from './getters';
-
+import listNav from './ListNavigation';
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -12,5 +12,5 @@ export const store = new Vuex.Store({
   mutations,
   actions,
   getters,
-  modules: {}
+  modules: { listNav }
 });

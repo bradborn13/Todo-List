@@ -16,8 +16,8 @@ function createList(listName) {
 }
 function addTaskToList(taskPayload, listId) {
   var task = new Task();
-  task.task_name = taskPayload.taskName;
-  task.taskDeadline = taskPayload.taskDeadline ? taskPayload.taskDeadline : '';
+  task.task_name = taskPayload.name;
+  task.taskDeadline = taskPayload.deadline ? taskPayload.deadline : '';
   task.isCompleted = false;
   task.createdAt = Date.now();
   task.updatedAt = Date.now();
@@ -215,14 +215,12 @@ exports.plugin = {
     });
     server.route({
       method: 'POST',
-      path: '/task/general',
+      path: '/addTask/general',
       handler: async (req, h) => {
         var task = new Task();
-        task.taskDeadline = req.payload.taskDeadline
-          ? req.payload.taskDeadline
-          : '';
+        task.taskDeadline = req.payload.deadline ? req.payload.deadline : '';
 
-        task.task_name = req.payload.task_name;
+        task.task_name = req.payload.name;
         task.isCompleted = false;
         task.createdAt = Date.now();
         task.updatedAt = Date.now();
@@ -263,16 +261,26 @@ exports.plugin = {
     });
     server.route({
       method: 'PUT',
-      path: '/task/{id}',
+      path: '/task/update/{id}',
       handler: (req, h) => {
+        var updateRecordQuerry_2 = {
+          updatedAt: Date.now(),
+          task_name: req.payload.name,
+          taskDeadline: req.payload.deadline
+        };
+        var updateRecordQuerry_1 = {
+          updatedAt: Date.now(),
+          task_name: req.payload.name
+        };
+        var update = req.payload.deadline
+          ? updateRecordQuerry_2
+          : updateRecordQuerry_1;
+
         return Task.findOneAndUpdate(
           {
             _id: req.params.id
           },
-          {
-            task_name: req.payload.task_name,
-            updatedAt: Date.now()
-          },
+          update,
           (err, result) => {
             if (err) {
               return err, 'Internal Mongodb Error';
@@ -280,9 +288,6 @@ exports.plugin = {
             if (!result) {
               return 'Not Found';
             }
-            // if (result.n === 0) {
-            //     return 'Not Found';
-            // }
             return 204;
           }
         );
