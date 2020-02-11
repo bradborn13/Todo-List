@@ -1,23 +1,31 @@
 <script lang="ts">
 /* eslint-disable */
-import axios from '@/config/axios-config';
+import { Getter } from 'vuex-class';
 import moment from 'moment';
+import { store } from '../../../store';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { GlobalGetterKeys } from '../../../store/getters';
+import { GlobalActionKeys } from '../../../store/actions';
 @Component({
   name: 'CalendarSection',
   components: {}
 })
 export default class CalendarSection extends Vue {
-  @Prop({ default: '', required: true }) taskList!: any[];
-  @Prop({ default: '', required: true }) currentListId!: String;
+  // @Prop({ default: '', required: true }) taskList!: any[];
+  @Getter(GlobalGetterKeys.getDashboardListData) taskList!: any[];
+
+  // @Prop({ default: '', required: true }) currentListId!: String;
+  @Getter(GlobalGetterKeys.getDashboardDataFilteredStatus) isListCustom!: any[];
+  @Getter(GlobalGetterKeys.getCustomListId) customListId!: any[];
+
   alertSuccess: string = 'alert-success';
   alertInfo: string = 'alert-info';
   currentDate: number = Date.now();
   attributes: any[] = [];
-  notificationDeadline: any[] = [];
-  notificationGeneral: any[] = [];
+  notificationDeadline: any[] = []; // -- to do if task close to deadline show it as red mark
+  @Getter(GlobalGetterKeys.getNotificationList) notificationGeneral!: any[];
 
-  async mounted() {
+  async beforeMount() {
     this.popultateCalendar();
     this.getListNotification();
   }
@@ -53,12 +61,27 @@ export default class CalendarSection extends Vue {
       .format('YYYY-MM-DD');
   }
   async getListNotification() {
-    let notificationData = [];
-    if (this.currentListId) {
-      await axios
-        .get(`/api/list/${this.currentListId}/generalNotification`)
+    if (this.isListCustom) {
+      await store
+        .dispatch(
+          GlobalActionKeys.getCustomListNotifications,
+          this.customListId
+        )
+        .then(() => {})
+        .catch((err) => {
+          this.$notify({
+            group: 'corner-notification',
+            type: 'error',
+            title: 'Error',
+            text: `Error: ${err}`
+          });
+        });
+    }
+    if (!this.isListCustom) {
+      await store
+        .dispatch(GlobalActionKeys.getGeneralListNotifications)
         .then(async (res) => {
-          notificationData = await res.data;
+          // notificationData = await res.data;
         })
         .catch((err) => {
           this.$notify({
@@ -69,22 +92,6 @@ export default class CalendarSection extends Vue {
           });
         });
     }
-    if (!this.currentListId) {
-      await axios
-        .get(`/api/general/notification`)
-        .then(async (res) => {
-          notificationData = await res.data;
-        })
-        .catch((err) => {
-          this.$notify({
-            group: 'corner-notification',
-            type: 'error',
-            title: 'Error',
-            text: `Error: ${err}`
-          });
-        });
-    }
-    this.notificationGeneral = notificationData;
   }
   popultateCalendar() {
     const calendarData: any[] = [];

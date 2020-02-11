@@ -1,17 +1,20 @@
 import { MutationTree } from 'vuex';
-import { IRootState } from './types';
+import { IRootState, ITask } from './types';
 export enum GlobalMutationKeys {
-  'setSomething' = 'setSomething',
   'dashboardData' = 'dashboardData',
   'setDashboardFilterByList' = 'setDashboardFilterByList',
   'setDashboardUnfiltered' = 'setDashboardUnfiltered',
   'setCustomListId' = 'setCustomListId',
-  'setDefaultCustomListId' = 'setDefaultCustomListId'
+  'setDefaultCustomListId' = 'setDefaultCustomListId',
+  'setNotificationList' = 'setNotificationList'
 }
 
 export const mutations: MutationTree<IRootState> = {
   dashboardData(state: IRootState, dashboardData: []) {
     state.dashboardListData = dashboardData;
+  },
+  setNotificationList(state: IRootState, notificationList: ITask[]) {
+    state.notificationList = notificationList;
   },
   setDashboardFilterByList(state: IRootState) {
     state.isDashboardDataFiltered = true;

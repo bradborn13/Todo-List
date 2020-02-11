@@ -9,6 +9,9 @@ import addTaskToCustomList from './actions/addTaskToCustomList';
 import completeTask from './actions/completeTask';
 import updateTask from './actions/updateTask';
 import deleteTask from './actions/deleteTask';
+import getCustomListNotifications from './actions/getCustomListNotifications';
+import getGeneralListNotifications from './actions/getGeneralListNotifications';
+import getAllTasks from './actions/getAllTasks';
 export enum GlobalActionKeys {
   'getGeneralListData' = 'getGeneralListData',
   'getCustomListData' = 'getCustomListData',
@@ -18,10 +21,14 @@ export enum GlobalActionKeys {
   'addTaskToCustomList' = 'addTaskToCustomList',
   'updateTask' = 'updateTask',
   'completeTask' = 'completeTask',
-  'deleteTask' = 'deleteTask'
+  'deleteTask' = 'deleteTask',
+  'getCustomListNotifications' = 'getCustomListNotifications',
+  'getGeneralListNotifications' = 'getGeneralListNotifications',
+  'getAllTasks' = 'getAllTasks'
 }
 
 export const actions: ActionTree<RootState, RootState> = {
+  getAllTasks,
   getGeneralListData,
   addTaskToCustomList,
   getCustomListData,
@@ -30,5 +37,7 @@ export const actions: ActionTree<RootState, RootState> = {
   addTaskToGeneralList,
   updateTask,
   completeTask,
-  deleteTask
+  deleteTask,
+  getCustomListNotifications,
+  getGeneralListNotifications
 };

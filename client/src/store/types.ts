@@ -1,11 +1,8 @@
 export interface IRootState {
-  generalListState: IVersion;
   dashboardListData: [];
   isDashboardDataFiltered: boolean;
+  notificationList: ITask[];
   customListId: string;
-}
-export interface IVersion {
-  version: number;
 }
 export interface ITask {
   name: string;

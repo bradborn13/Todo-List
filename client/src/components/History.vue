@@ -1,7 +1,7 @@
 <template>
   <h1>
     <div class="col-lg-8 mx-auto">
-      <table class="table table-hover small ">
+      <table class="table table-hover small">
         <thead>
           <tr>
             <th scope="col">Task</th>
@@ -24,20 +24,22 @@
 </template>
 
 <script lang="ts">
-import axios from '@/config/axios-config';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
+import { GlobalGetterKeys } from '../store/getters';
+import { GlobalActionKeys } from '../store/actions';
+import { store } from '../store';
 
 @Component
 export default class History extends Vue {
-  tasks: any[] = [];
+  @Getter(GlobalGetterKeys.getDashboardListData) tasks!: any[] = [];
   mounted() {
     this.getTasks();
   }
   getTasks() {
-    axios({ method: 'get', url: '/api/tasksHistory' })
-      .then((tasks) => {
-        this.tasks = tasks.data;
-      })
+    store
+      .dispatch(GlobalActionKeys.getAllTasks)
+      .then(() => {})
       .catch((err) => {
         this.$notify({
           group: 'corner-notification',

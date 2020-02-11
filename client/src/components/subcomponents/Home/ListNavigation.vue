@@ -2,7 +2,6 @@
 /* eslint-disable */
 import CreateList from '@/components/subcomponents/ListNavigation/CreateList.vue';
 import ListTab from '@/components/subcomponents/ListNavigation/ListTab.vue';
-import axios from '@/config/axios-config';
 // import ListSection from "./ListSection.vue";
 import * as moment from 'moment';
 import Loading from 'vue-loading-overlay';
@@ -18,7 +17,7 @@ import { Getter } from 'vuex-class';
 })
 export default class ListNavigation extends Vue {
   @Getter(GlobalGetterKeys.getDashboardDataFilteredStatus)
-  isListFiltered: boolean;
+  isListFiltered!: boolean;
   createListView: boolean = false;
 
   public returnView() {
@@ -43,15 +42,8 @@ export default class ListNavigation extends Vue {
       <CreateList @returnView="returnView" @onListCreated="showCreatedList" />
     </div>
     <div v-if="!createListView">
-      <section
-        style="padding-bottom:30px ;cursor:pointer;color:#A9A9A9"
-        v-on:click="returnView"
-      >
-        <img
-          src="@/assets/add-new-list.svg"
-          height="50px"
-          style="color:white"
-        />
+      <section style="padding-bottom:30px ;cursor:pointer;color:#A9A9A9" v-on:click="returnView">
+        <img src="@/assets/add-new-list.svg" height="50px" style="color:white" />
         <div style="color:white;display:inline">Create List</div>
       </section>
 

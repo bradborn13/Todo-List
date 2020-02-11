@@ -3,15 +3,13 @@ import { IRootState } from './types';
 import { GetterTree } from 'vuex';
 
 export enum GlobalGetterKeys {
-  'getGeneralList' = 'getGeneralList',
-  'getVersionState' = 'getVersionState',
   'getDashboardListData' = 'getDashboardListData',
   'getDashboardDataFilteredStatus' = 'getDashboardDataFilteredStatus',
-  'getCustomListId' = 'getCustomListId'
+  'getCustomListId' = 'getCustomListId',
+  'getNotificationList' = 'getNotificationList'
 }
 export const getters: GetterTree<RootState, IRootState> = {
-  getGeneralList: (state) => state.generalListState,
-  getVersionState: (state) => state.generalListState.version,
+  getNotificationList: (state) => state.notificationList,
   getDashboardListData: (state) => state.dashboardListData,
   getDashboardDataFilteredStatus: (state) => state.isDashboardDataFiltered,
   getCustomListId: (state) => state.customListId
