@@ -46,10 +46,17 @@ export default class Home extends Vue {
   cleanForm() {
     this.toggleMenuTask = true;
   }
+  resetHomePage() {
+    this.showAddTaskComponent = false;
+    this.toggleMenuTask = true;
+    this.taskToEdit = '';
+  }
   getGeneralListHistory() {
     // if (this.listId) {  TODO: check if this is not needded anymore
     //   this.listId = '';
     // }
+    this.showAddTaskComponent = false;
+
     store
       .dispatch(GlobalActionKeys.getGeneralListHistory)
       .then(() => {})
@@ -140,6 +147,7 @@ export default class Home extends Vue {
   customListHistory(listId: string) {
     if (this.toggleMenuTask) {
       this.isLoading = true;
+      this.showAddTaskComponent = false;
       this.getCustomListHistory(listId);
       this.toggleMenuTask = false;
       this.isLoading = false;
@@ -213,6 +221,16 @@ export default class Home extends Vue {
         this.reRenderCalendar();
       });
   }
+  // funtion called when general list is loaded
+  resetHomeComponentGeneral() {
+    this.resetHomePage();
+    this.getGeneralListData();
+  }
+  // funtion called when custom list is loaded
+  resetHomeComponentFiltered() {
+    this.resetHomePage();
+    this.getCustomListData();
+  }
   handleTaskAddedOrUpdate() {
     if (this.isDashboardFiltered) {
       this.getCustomListData();
@@ -233,6 +251,14 @@ export default class Home extends Vue {
     return this.$nextTick(() => {
       this.showAddTaskComponent = true;
     });
+  }
+  get shouldShowAddTaskComponent() {
+    if (!this.showAddTaskComponent) {
+      if (!this.toggleMenuTask) {
+        return false;
+      }
+      return true;
+    }
   }
   getCustomListHistory(listId: string) {
     this.cleanForm();
@@ -270,11 +296,12 @@ export default class Home extends Vue {
     ></loading>
     <div class="col-lg-3 mx-auto">
       <ListNavigation
-        @renderListTasks="getCustomListData"
-        @renderGeneralTasks="getGeneralListData"
-        class="list-section"
+        @renderListTasks="resetHomeComponentFiltered"
+        @renderGeneralTasks="resetHomeComponentGeneral"
+        class="side-sections"
       />
     </div>
+
     <div class="col-lg-6 mx-auto center-section">
       <div class="navigation col-lg-6 mx-auto">
         <ul>
@@ -305,74 +332,80 @@ export default class Home extends Vue {
           </li>
         </ul>
       </div>
-      <div v-if="!showAddTaskComponent">
-        <img
-          src="../assets/add-new-list.svg"
-          class="calendar-icon"
+      <div>
+        <button
+          class="btn-add-task"
+          v-if="shouldShowAddTaskComponent"
           v-on:click="toggleAddTaskComponent"
+          type="submit"
+        >
+          <font-awesome-icon icon="plus-circle" />
+          <div class="btn-task-text">Create Task</div>
+        </button>
+        <AddTask
+          v-if="showAddTaskComponent"
+          @handleSuccessOperation="handleTaskAddedOrUpdate"
+          @closeComponent="toggleAddTaskComponent"
+          :editTaskWithId="taskToEdit"
         />
       </div>
-      <AddTask
-        v-if="showAddTaskComponent"
-        @handleSuccessOperation="handleTaskAddedOrUpdate"
-        :editTaskWithId="taskToEdit"
-      />
-
-      <table class="table col-lg-12 list-content">
-        <tr
-          v-for="todo in todos"
-          v-bind:key="todo._id"
-          v-bind:task_name="todo.task_name"
-        >
-          <td class="text-left">
-            <img
-              src="../assets/check.svg"
-              :class="{
-                taskIsCompleted: todo.isCompleted,
-                toCompleteTask: !todo.isCompleted
-              }"
-              @click="todo.completedAt ? '' : completeTask(todo._id)"
-            />
-            <span class="task-name">{{ todo.task_name }}</span>
-          </td>
-          <td class="text-right">
-            <a
-              href="#"
-              data-toggle="tooltip"
-              data-placement="top"
-              :title="'Deadline: ' + convertDateToLocal(todo.taskDeadline)"
-            >
+      <div class="list-content">
+        <table class="table col-lg-12">
+          <tr
+            v-for="todo in todos"
+            v-bind:key="todo._id"
+            v-bind:task_name="todo.task_name"
+          >
+            <td class="text-left">
               <img
-                v-if="todo.taskDeadline"
-                src
+                src="../assets/check.svg"
                 :class="{
-                  pendingDeadline: !todo.isCompleted,
-                  completedDeadline: todo.isCompleted
+                  taskIsCompleted: todo.isCompleted,
+                  toCompleteTask: !todo.isCompleted
                 }"
+                @click="todo.completedAt ? '' : completeTask(todo._id)"
               />
-            </a>
-            <button
-              v-on:click="editTask(todo._id)"
-              class="btn btn-outline-info"
-            >
-              Edit
-            </button>
-            <button
-              v-on:click="deleteTask(todo._id)"
-              class="btn btn-outline-danger"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      </table>
+              <span class="task-name">{{ todo.task_name }}</span>
+            </td>
+            <td class="text-right">
+              <a
+                href="#"
+                data-toggle="tooltip"
+                data-placement="top"
+                :title="'Deadline: ' + convertDateToLocal(todo.taskDeadline)"
+              >
+                <img
+                  v-if="todo.taskDeadline"
+                  src
+                  :class="{
+                    pendingDeadline: !todo.isCompleted,
+                    completedDeadline: todo.isCompleted
+                  }"
+                />
+              </a>
+              <button
+                v-on:click="editTask(todo._id)"
+                class="btn btn-outline-info"
+              >
+                Edit
+              </button>
+              <button
+                v-on:click="deleteTask(todo._id)"
+                class="btn btn-outline-danger"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
     <div class="col-lg-3 mx-auto">
       <CalendarSection
         v-if="showCalendarComponent"
         :taskList="todos"
         :currentListId="listId"
-        class="list-section"
+        class="side-sections"
       />
     </div>
   </div>

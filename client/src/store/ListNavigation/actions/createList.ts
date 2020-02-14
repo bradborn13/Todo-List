@@ -12,7 +12,6 @@ export default async function createList(
     axios
       .post('/api/list', { listName: name })
       .then(async (res: any) => {
-        console.log(res, 'ce ce ');
         return resolve(res);
       })
       .catch((err) => {

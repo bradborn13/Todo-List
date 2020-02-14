@@ -1,66 +1,108 @@
-.list-section {
-    top: 10vh;
-    position: sticky;
+.side-sections {
+  top: 10vh;
+  position: sticky;
 }
 
 .center-section {
-    padding-top: 20px;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-
-    background: white;
+  padding-top: 20px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15), 0 5px 5px rgba(0, 0, 0, 0.12);
+  height: 97vh;
+  overflow: hidden;
 }
 
+.btn-add-task {
+  padding: 3px 50px;
+  min-width: 8vw;
+  min-height: 5vh;
+  line-height: 24px;
+  border-radius: 50px;
+  border: none;
+  position: relative;
+  text-align: center;
+  margin: 2vh 0 2vh 0;
+  color: white;
+  opacity: 1;
+  background-color: #21D4FD;
+  background-image: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%);
+}
+
+.btn-add-task:hover {
+  opacity: 0.8
+}
+
+.btn-task-text {
+  display: inline;
+  padding: 0 0 0 0.4vw;
+}
+
+
+
 .toCompleteTask {
-    height: 50%;
-    opacity: 30%;
-    transition: opacity 0.5s linear;
+  height: 50%;
+  opacity: 30%;
+  transition: opacity 0.5s linear;
 }
 
 .taskIsCompleted {
-    height: 50%;
+  height: 50%;
 }
 
 .pendingDeadline {
-    height: 50%;
-    opacity: 30%;
-    transition: opacity 0.5s linear;
+  height: 50%;
+  opacity: 30%;
+  transition: opacity 0.5s linear;
 }
 
 .pendingDeadline:hover {
-    opacity: 100%;
+  opacity: 100%;
+}
+
+.table tr:hover {
+  background-color: #d1ecf1;
 }
 
 .completedDeadline {
-    height: 50%;
-    transition: opacity 0.5s linear;
+  height: 50%;
+  transition: opacity 0.5s linear;
 }
 
 .clearUpdate:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .toCompleteTask:hover {
-    opacity: 100%;
+  opacity: 100%;
 }
 
 .clearUpdate {
-    display: absolute;
-    height: 60px;
-    margin-left: -20px;
-    margin-top: -10px;
+  display: absolute;
+  height: 60px;
+  margin-left: -20px;
+  margin-top: -10px;
 }
 
 .calendar-icon {
-    display: absolute;
-    height: 30px;
-    margin-left: 10px !important;
-    margin-top: -10px;
+  display: absolute;
+  height: 30px;
+  margin-left: 10px !important;
+  margin-top: -10px;
+}
+
+.list-content {
+  height: 97vh;
+  overflow: hidden;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+}
+
+.list-content::-webkit-scrollbar {
+  display: none;
 }
 
 .selectedOption {
-    background-color: #f1f3f4;
+  background-color: #f1f3f4;
 }
 
 .task-name {
-    margin-left: 20%;
+  margin-left: 20%;
 }

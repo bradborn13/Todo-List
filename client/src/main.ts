@@ -8,6 +8,7 @@ import '@/config/vue-vCalendar-config';
 import '@/config/vue-loading-config';
 import '@/config/vue-notification-config';
 import '@/config/axios-config';
+import '@/config/vue-fontawesome';
 require('../node_modules/bootstrap/dist/css/bootstrap.css');
 Vue.config.productionTip = false;
 

@@ -46,15 +46,17 @@ export default class CreateList extends Vue {
   }
 }
 </script>
-<style></style>
+
+<style>
+@import '../../../assets/css/createList.css';
+</style>
 <template>
   <div>
     <form v-on:submit.prevent="addList" class="col-lg-8 mx-auto">
       <h3>
         <img
+          class="returnListView"
           src="../../../assets/icons8-back-100.png"
-          height="30px"
-          style="float:left"
           v-on:click="switchView"
         />
         CreateList
@@ -66,7 +68,7 @@ export default class CreateList extends Vue {
         id="taskNameInput"
         placeholder="List name..."
       />
-      <button type="submit" class="btn btn-outline-success btn-block mt-3 mb-4">
+      <button type="submit" class="btn btn-outline-primary btn-block mt-3 mb-4">
         Save
       </button>
     </form>

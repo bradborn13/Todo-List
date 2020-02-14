@@ -27,9 +27,9 @@
           role="tab"
         >
           {{ list.listName }}
-          <span class="badge badge-primary badge-pill">
-            {{ list.completedTaskCount + '/' + list.taskCount }}
-          </span>
+          <span class="badge badge-secondary badge-pill">{{
+            list.completedTaskCount + ' / ' + list.taskCount
+          }}</span>
         </li>
         <li
           v-else
@@ -37,9 +37,9 @@
           role="tab"
         >
           {{ list.listName }}
-          <span class="badge badge-secondary badge-pill">
-            {{ list.completedTaskCount + '/' + list.taskCount }}
-          </span>
+          <span class="badge badge-secondary badge-pill">{{
+            list.completedTaskCount + ' / ' + list.taskCount
+          }}</span>
         </li>
       </section>
     </ul>
@@ -96,4 +96,6 @@ export default class ListTab extends Vue {
   }
 }
 </script>
-<style></style>
+<style>
+@import '../../../assets/css/listTab.css';
+</style>

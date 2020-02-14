@@ -1,0 +1,48 @@
+.btn-create-list {
+    padding: 3px 50px;
+    min-width: 8vw;
+    min-height: 5vh;
+    line-height: 24px;
+    border-radius: 50px;
+    border: none;
+    position: relative;
+    text-align: center;
+    margin: 2vh 0 2vh 0;
+    color: white;
+    background-color: #21D4FD;
+    opacity: 1;
+
+    background-image: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%);
+}
+
+.btn-create-list:hover {
+    opacity: 0.8
+        /* background-image: none */
+
+}
+
+
+
+.list-navigation {
+    height: 80vh;
+    overflow: hidden;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+
+}
+
+.list-navigation::-webkit-scrollbar {
+    display: none;
+}
+
+.list-navigation .list-group li:hover {
+    background: lightgrey;
+    border: none;
+    color: white
+}
+
+.btn-text {
+    color: white;
+    display: inline;
+    padding: 0 0 0 0.4vw;
+}

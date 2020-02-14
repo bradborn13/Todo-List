@@ -42,15 +42,16 @@ export default class ListNavigation extends Vue {
       <CreateList @returnView="returnView" @onListCreated="showCreatedList" />
     </div>
     <div v-if="!createListView">
-      <section style="padding-bottom:30px ;cursor:pointer;color:#A9A9A9" v-on:click="returnView">
-        <img src="@/assets/add-new-list.svg" height="50px" style="color:white" />
-        <div style="color:white;display:inline">Create List</div>
-      </section>
-
-      <ListTab @showListTasks="showListTasks" />
+      <button class="btn-create-list" v-on:click="returnView" type="submit">
+        <font-awesome-icon icon="plus-circle" />
+        <div class="btn-text">Create List</div>
+      </button>
+      <ListTab @showListTasks="showListTasks" class="list-navigation" />
     </div>
     <br />
   </div>
 </template>
 
-<style></style>
+<style>
+@import '../../../assets/css/listNav.css';
+</style>

@@ -9,11 +9,9 @@ export default async function getCustomListNotifications(
   listId: string
 ): Promise<any> {
   return new Promise(async (resolve, reject) => {
-    console.log(listId, 'them list id');
     axios
       .get(`/api/list/${listId}/generalNotification`)
       .then(async (resp) => {
-        console.log(resp.data, 'aci');
         commit(GlobalMutationKeys.setNotificationList, resp.data);
         return resolve();
       })

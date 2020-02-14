@@ -32,7 +32,7 @@ import { store } from '../store';
 
 @Component
 export default class History extends Vue {
-  @Getter(GlobalGetterKeys.getDashboardListData) tasks!: any[] = [];
+  @Getter(GlobalGetterKeys.getDashboardListData) tasks!: any[];
   mounted() {
     this.getTasks();
   }
