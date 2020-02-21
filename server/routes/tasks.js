@@ -28,18 +28,15 @@ async function countTaskStatus(listArray) {
   const listArr = [];
   for (let index = 0; index < listArray.length; index++) {
     const loopedObject = listArray[index];
-    await Task.countDocuments(
-      { listId: loopedObject._id },
-      async (err, resp) => {
-        if (err) {
-          return err;
-        }
-        loopedObject.taskCount = resp;
+    await Task.countDocuments({ listId: loopedObject._id }, (err, resp) => {
+      if (err) {
+        return err;
       }
-    );
+      loopedObject.taskCount = resp;
+    });
     await Task.countDocuments(
       { listId: loopedObject._id, isCompleted: true },
-      async (err, resp) => {
+      (err, resp) => {
         if (err) {
           return err;
         }
@@ -87,7 +84,7 @@ exports.plugin = {
       handler: async (req, h) => {
         const customListArray = [];
         let queryResult = [];
-        await List.find((err, res) => {
+        await List.find({}, (err, res) => {
           if (err) {
             return err;
           }
