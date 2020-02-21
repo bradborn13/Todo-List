@@ -1,69 +1,111 @@
 .form-wrapper {
-    display: inline-block;
-    margin-top: 2vh;
-    margin-bottom: 2vh;
-    overflow: visible
-}
-
-#taskNameInput {
-    width: 17vw;
-    display: inline
-}
-
-.calendar-icon {
-    display: inline;
-    overflow: visible;
-}
-
-.calendar-icon .calendar-icon {
-    height: 60px;
-    background-image: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  overflow: visible;
+  box-shadow: 0 0 22px 2px lightgrey;
+  padding-top: 5vh;
+  padding-bottom: 3vh;
 }
 
 .close-create-task-component {
-    height: 40%;
-    left: 0px;
-    position: absolute;
+  height: 2.5vh;
+  position: absolute;
+  left: 13vw;
+  box-shadow: 0 0 12px 5px #50b499;
+  border-radius: 50%;
+}
 
+.header-title {
+  color: #4a5568;
+  order: 1;
+}
+.taskName-section {
+  order: 2;
+  width: 17vw;
+}
+.form-control-taskName {
+  margin-top: 20px;
+  margin-left: 2vw;
+  margin-bottom: 20px;
+  display: inline;
+}
+
+.calendar-section {
+  order: 3;
+
+  width: 17vw;
+}
+
+.form-control-deadline {
+  margin-left: 2vw;
+  display: inline;
+}
+
+.btn-addTask-component {
+  order: 4;
+  margin-top: 3vh;
+  width: 10vw;
+}
+.button-clear-taskName {
+  background: #e53e3e;
+  color: white;
+  font: bold;
+  opacity: 0.8;
+  width: 3vw;
+  height: 4vh;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+.button-clear-deadline {
+  background: #e53e3e;
+  color: white;
+  font: bold;
+  opacity: 0.8;
+  width: 3vw;
+  height: 4vh;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+.button-clear-deadline:hover {
+  opacity: 1;
 }
 
 .close-create-task-component:hover {
-    border-radius: 50%;
-    cursor: pointer;
-    animation: pulse 1s;
-    animation-fill-mode: forwards;
+  cursor: pointer;
+  animation: pulse2 1s;
+  animation-fill-mode: forwards;
 }
 
-@-webkit-keyframes pulse {
-    0% {
-        -webkit-box-shadow: 0 0 0 0 #50B499;
-    }
+@-webkit-keyframes pulse2 {
+  0% {
+    -webkit-box-shadow: 0 0 12px 5px#50B499;
+  }
 
-    70% {
-        -webkit-box-shadow: 0 0 0 15px #50B499;
-    }
+  70% {
+    -webkit-box-shadow: 0 0 10px 8px #50b499;
+  }
 
-    100% {
-        -webkit-box-shadow: 0 0 0 10px #50B499;
-    }
+  100% {
+    -webkit-box-shadow: 0 0 10px 8px #50b499;
+  }
 }
 
-@keyframes pulse {
+@keyframes pulse2 {
+  0% {
+    -moz-box-shadow: 0 0 12px 5px #50b499;
+    box-shadow: 0 0 12px 5px#50B499;
+  }
 
-    0% {
-        -moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
-        box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
+  70% {
+    -moz-box-shadow: 0 0 10px 8px #50b499;
+    box-shadow: 0 0 10px 8px #50b499;
+  }
 
-
-    }
-
-    70% {
-        -moz-box-shadow: 0 0 0 15px #50B499;
-        box-shadow: 0 0 0 15px #50B499;
-    }
-
-    100% {
-        -moz-box-shadow: 0 0 0 10px #50B499;
-        box-shadow: 0 0 0 10px #50B499;
-    }
+  100% {
+    -moz-box-shadow: 0 0 10px 8px #50b499;
+    box-shadow: 0 0 10px 8px #50b499;
+  }
 }

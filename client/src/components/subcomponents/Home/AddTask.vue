@@ -3,10 +3,17 @@
 import { Action, Getter, namespace } from 'vuex-class';
 import { GlobalGetterKeys } from '../../../store/getters';
 import { GlobalActionKeys } from '../../../store/actions';
-import { ITask, ICustomListTask, IUpdateTask } from '../../../store/types';
+import {
+  ITask,
+  ICustomListTask,
+  IUpdateTask,
+  ModuleNames
+} from '../../../store/types';
 import moment from 'moment';
 import { store } from '../../../store';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { ListNavigationActionKeys } from '../../../store/ListNavigation/ListNavigation.actions';
+
 @Component({
   name: 'CalendarSection',
   components: {}
@@ -17,7 +24,6 @@ export default class AddTask extends Vue {
   @Getter(GlobalGetterKeys.getDashboardListData) todos!: any;
   @Getter(GlobalGetterKeys.getCustomListId) listId!: string;
   @Prop({ default: '', required: true }) editTaskWithId!: string;
-  isEdit: boolean = false;
   taskName: string = '';
   taskDeadline: string = '';
   calendarNoDate: string = 'deadline-icon';
@@ -34,11 +40,9 @@ export default class AddTask extends Vue {
       this.taskDeadline = selectedTask.taskDeadline;
     }
   }
-  // resetInput() {
-  //   this.isEdit = false;
-  //   this.taskName = '';
-  // }
+
   closeComponent() {
+    this.editTaskWithId = '';
     this.$emit('closeComponent');
   }
   async addNewTask() {
@@ -66,10 +70,26 @@ export default class AddTask extends Vue {
         task: { name: this.taskName, deadline: this.taskDeadline },
         listId: this.listId
       };
+      const getListCollection = [
+        ModuleNames.listNav,
+        ListNavigationActionKeys.getListCollection
+      ].join('/');
       return store
         .dispatch(GlobalActionKeys.addTaskToCustomList, newCustomListTask)
-        .then((res) => {
-          this.$emit('handleSuccessOperation');
+        .then(async (res) => {
+          await store
+            .dispatch(getListCollection)
+            .then(() => {
+              this.$emit('handleSuccessOperation');
+            })
+            .catch((err) => {
+              this.$notify({
+                group: 'corner-notification',
+                type: 'error',
+                title: 'Error',
+                text: `Error: ${err}`
+              });
+            });
         })
         .catch((err) => {
           this.$notify({
@@ -86,9 +106,8 @@ export default class AddTask extends Vue {
     };
     return store
       .dispatch(GlobalActionKeys.addTaskToGeneralList, newTask)
-
       .then((res) => {
-        return this.$emit('handleSuccessOperation');
+        this.$emit('handleSuccessOperation');
       })
       .catch((err) => {
         this.$notify({
@@ -103,7 +122,6 @@ export default class AddTask extends Vue {
       });
   }
   getImage() {
-    console.log(this.taskDeadline);
     const image = this.taskDeadline
       ? require('../../../assets/' + this.calendarWithDate + '.svg')
       : require('../../../assets/' + this.calendarNoDate + '.svg');
@@ -148,51 +166,61 @@ export default class AddTask extends Vue {
 </style>
 <template>
   <div class="col-xl-12">
-    <form v-on:submit.prevent="addNewTask" class="col-lg-6 mx-auto">
+    <form v-on:submit.prevent="addNewTask" class="col-xl-12 mx-auto">
       <div class="form-wrapper col-md-12">
         <img
           class="close-create-task-component"
           src="../../../assets/icons8-back-100.png"
           v-on:click="closeComponent"
         />
-        <!-- <img
-          v-if="editTaskWithId"
-          src="../../../assets/X CIRCLE.svg"
-          v-on:click="resetInput()"
-          class="clearUpdate"
-        /> -->
-        <input
-          v-model="taskName"
-          class="form-control"
-          id="taskNameInput"
-          v-bind:placeholder="taskName ? taskName : 'Add New Task'"
-          listId
-        />
-        <vc-date-picker
-          class="calendar-icon"
-          v-model="taskDeadline"
-          :popover="{ placement: 'bottom', visibility: 'hover' }"
-        >
-          <img v-bind:src="getImage()" class="calendar-icon" />
-        </vc-date-picker>
+        <h1 class="header-title">{{editTaskWithId? " Update Task": "Add Task"}}</h1>
+        <div class="taskName-section">
+          <input
+            v-model="taskName"
+            class="form-control-taskName shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-100"
+            v-bind:placeholder="taskName ? taskName : 'Task Name'"
+            listId
+          />
+          <button
+            v-if="taskName"
+            type="button"
+            class="button-clear-taskName"
+            @click="taskName = ''"
+          >Clear</button>
+        </div>
+
+        <div class="calendar-section">
+          <vc-date-picker
+            v-model="taskDeadline"
+            :popover="{ placement: 'bottom', visibility: 'hover' }"
+          >
+            <input
+              v-model="taskDeadline"
+              class="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 form-control-deadline"
+              v-bind:placeholder="taskDeadline ? taskDeadline : 'Add deadline'"
+              v-on="taskDeadline"
+            />
+          </vc-date-picker>
+          <button
+            v-if="taskDeadline"
+            type="button"
+            class="button-clear-deadline"
+            @click="taskDeadline = ''"
+          >Clear</button>
+        </div>
+
         <button
           v-if="!this.editTaskWithId"
           type="submit"
-          class="btn btn-outline-primary btn-block mt-3 mb-4"
-        >
-          Submit
-        </button>
-
+          class="btn btn-outline-primary btn-addTask-component"
+        >Submit</button>
         <button
           v-else
           type="button"
           v-on:click="updateTask()"
-          class="btn btn-primary btn-block mt-3 mb-4"
-        >
-          Update
-        </button>
+          class="btn btn-primary btn-addTask-component"
+        >Update</button>
       </div>
-      <!-- <vc-date-picker v-if="showDeadline"></vc-date-picker> -->
     </form>
   </div>
 </template>

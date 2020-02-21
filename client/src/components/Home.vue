@@ -5,11 +5,12 @@ import Loading from 'vue-loading-overlay';
 import AddTask from './subcomponents/Home/AddTask.vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import CalendarSection from './subcomponents/Home/CalendarSection.vue';
+import { ListNavigationActionKeys } from '../store/ListNavigation/ListNavigation.actions';
 import { Datetime } from 'vue-datetime';
 import { Action, Getter, namespace } from 'vuex-class';
 import { GlobalActionKeys } from '../store/actions';
 import { GlobalGetterKeys } from '../store/getters';
-import { ITask } from '../store/types';
+import { ITask, ModuleNames } from '../store/types';
 import { store } from '../store';
 @Component({
   name: 'Home',
@@ -97,13 +98,20 @@ export default class Home extends Vue {
   //   }, 5000);
   // },
 
-  completeTask(taskId: string) {
-    store
+  async completeTask(taskId: string) {
+    await store
       .dispatch(GlobalActionKeys.completeTask, taskId)
-      .then((res) => {
-        this.isDashboardFiltered
-          ? this.getCustomListData()
-          : this.getGeneralListData();
+      .then(async (res) => {
+        if (this.isDashboardFiltered) {
+          const getListCollection = [
+            ModuleNames.listNav,
+            ListNavigationActionKeys.getListCollection
+          ].join('/');
+          await store.dispatch(getListCollection);
+          this.getCustomListData();
+        } else {
+          this.getGeneralListData();
+        }
         return this.$notify({
           group: 'corner-notification',
           type: 'success',
@@ -162,10 +170,17 @@ export default class Home extends Vue {
       ? this.getGeneralListData()
       : this.getGeneralListHistory();
   }
-  deleteTask(taskId: string) {
-    store
+  async deleteTask(taskId: string) {
+    await store
       .dispatch(GlobalActionKeys.deleteTask, taskId)
-      .then((res) => {
+      .then(async (res) => {
+        if (this.isDashboardFiltered) {
+          const getListCollection = [
+            ModuleNames.listNav,
+            ListNavigationActionKeys.getListCollection
+          ].join('/');
+          await store.dispatch(getListCollection);
+        }
         this.getListData();
         this.$notify({
           group: 'corner-notification',
@@ -244,6 +259,9 @@ export default class Home extends Vue {
     // reload dashobard using general list get method
   }
   toggleAddTaskComponent() {
+    if (this.showAddTaskComponent) {
+      this.taskToEdit = '';
+    }
     this.showAddTaskComponent = !this.showAddTaskComponent;
   }
   reRenderAddTask() {
@@ -315,8 +333,7 @@ export default class Home extends Vue {
               :class="{
                 selectedOption: toggleMenuTask
               }"
-              >Main</a
-            >
+            >Main</a>
           </li>
 
           <li class="col-lg-6">
@@ -327,12 +344,11 @@ export default class Home extends Vue {
                   : generalListHistory()
               "
               :class="{ selectedOption: !toggleMenuTask }"
-              >All</a
-            >
+            >All</a>
           </li>
         </ul>
       </div>
-      <div>
+      <div class="col-xl-12 mx-auto">
         <button
           class="btn-add-task"
           v-if="shouldShowAddTaskComponent"
@@ -351,11 +367,7 @@ export default class Home extends Vue {
       </div>
       <div class="list-content">
         <table class="table col-lg-12">
-          <tr
-            v-for="todo in todos"
-            v-bind:key="todo._id"
-            v-bind:task_name="todo.task_name"
-          >
+          <tr v-for="todo in todos" v-bind:key="todo._id" v-bind:task_name="todo.task_name">
             <td class="text-left">
               <img
                 src="../assets/check.svg"
@@ -384,17 +396,15 @@ export default class Home extends Vue {
                 />
               </a>
               <button
+                v-if="toggleMenuTask"
                 v-on:click="editTask(todo._id)"
                 class="btn btn-outline-info"
-              >
-                Edit
-              </button>
+              >Edit</button>
               <button
+                v-if="toggleMenuTask"
                 v-on:click="deleteTask(todo._id)"
                 class="btn btn-outline-danger"
-              >
-                Delete
-              </button>
+              >Delete</button>
             </td>
           </tr>
         </table>
