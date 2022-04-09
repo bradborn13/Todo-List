@@ -19,7 +19,7 @@
     "bootstrap": "^4.4.1",
     "core-js": "^3.4.4",
     "luxon": "^1.22.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "tslint-config-standard": "^9.0.0",
     "tslint-consistent-codestyle": "^1.16.0",
     "v-calendar": "^1.0.1",
