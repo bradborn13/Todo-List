@@ -18,7 +18,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
     "core-js": "^3.4.4",
-    "luxon": "^1.22.0",
+    "luxon": "^2.5.2",
     "moment": "^2.24.0",
     "tslint-config-standard": "^9.0.0",
     "tslint-consistent-codestyle": "^1.16.0",
